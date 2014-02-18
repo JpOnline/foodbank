@@ -215,6 +215,7 @@ function printIssuedVoucher(){
     var clientName = selClient.options[selClient.selectedIndex].innerHTML;
     var date = document.getElementById('datevoucherissued').value;
     var agency = selAgency.options[selAgency.selectedIndex].innerHTML;
+    alert('bla');
 
     myWindow = window.open('printissuedvoucher.php?n='+clientName+'&a='+agency+'&d='+date,'');
     myWindow.focus();
