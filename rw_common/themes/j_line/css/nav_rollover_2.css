@@ -1,0 +1,9 @@
+nav>ul>li a,
+nav>ul>li>a:hover {
+background-image: url(../images/arrow2.png);
+}
+
+nav>ul>li>a:not(.current):hover{
+background-position: 4px 0px;
+padding-left: 28px;
+}
