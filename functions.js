@@ -593,66 +593,87 @@ function newReportedProblem() {
 function validateVoucherForm() {
     var nature = 0;
     var checkboxes = 0;
-    for(var j = 0; j < document.forms.length; j++) {
+    var sum = 0;
+    var sum2 = 0;
+    var explanation = false;
+    for (var j = 0; j < document.forms.length; j++) {
         var forms = document.forms[j];
         var found = false;
-	    for(var i = 0; i < forms.length; i++) {
-    	    if(forms[i].type == 'text' && !forms[i].disabled) {
-        	    if(forms[i].value == '' || forms[i].value == null) {
-            	    forms[i].style.borderColor = 'red';
+        for (var i = 0; i < forms.length; i++) {
+            if (forms[i].type == 'text' && !forms[i].disabled) {
+                if (forms[i].value == '' || forms[i].value == null) {
+                    forms[i].style.borderColor = 'red';
                     found = true;
-	            } else {
-    	            forms[i].style.borderColor = '';
-        	    }
-	        } else if(forms[i].type == 'checkbox' && forms[i].id != 'exchangenow') {
+                } else {
+                    forms[i].style.borderColor = '';
+                }
+            } else if (forms[i].type == 'checkbox' && forms[i].id != 'exchangenow') {
                 checkboxes++;
-                if(forms[i].checked) {
+                if (forms[i].checked) {
                     nature++;
                 }
             }
+            if (forms[i].name == 'explanation') {
+                if (forms[i].value != '' && forms[i].value != null) {
+                    explanation = true;
+                }
+            }
+
+        }
+        for (var i = 0; i < forms.length; i++) {
+            if (forms[i].name == 'amount') {
+                sum += parseInt(forms[i].value, 10);
+            }
+            if (forms[i].name == 'noadults' || forms[i].name == 'nochildren') {
+                sum2 += parseInt(forms[i].value, 10);
+            }
         }
     }
-    if(nature == 0 && checkboxes > 0) {
+    if ((sum2 != sum) && explanation == false) {
+        alert('You are exanging ' + sum + ' parcel(s) for ' + sum2 + ' person(s). You must explain why.');
+        return false;
+    }
+    if (nature == 0 && checkboxes > 0) {
         alert('You must select at least one nature of need.');
         return false;
-    } else if(nature == 1) {
+    } else if (nature == 1) {
         var othernature = document.getElementById('othernaturefield');
-        if(!othernature.disabled && othernature.value == '') {
+        if (!othernature.disabled && othernature.value == '') {
             alert('You must specify the other nature of need.');
             return false;
         }
     }
     var help = document.getElementById('helping');
-    if(help.value == '' || help.value == null) {
+    if (help.value == '' || help.value == null) {
         help.style.borderColor = 'red';
         found = true;
     } else {
         help.style.borderColor = '';
     }
-    if(found) {
+    if (found) {
         alert('Fields in red must not be empty.');
         return false;
     }
     var date;
-    if(date = document.getElementById('datevoucherissued')) {
-	    if(!isValidDate(date.value)) {
-    	    alert('Invalid date.');
-        	date.style.borderColor = 'red';
-	        return false;
-    	}
+    if (date = document.getElementById('datevoucherissued')) {
+        if (!isValidDate(date.value)) {
+            alert('Invalid date.');
+            date.style.borderColor = 'red';
+            return false;
+        }
     }
     var exchanged;
-    if(exchanged = document.getElementById('exchangenow') && exchanged.checked) {
+    if (exchanged = document.getElementById('exchangenow') && exchanged.checked) {
         var dateexchange;
-        if(dateexchange = document.getElementById('dateGiven')) {
-            if(!isValidDate(dateexchange.value)) {
+        if (dateexchange = document.getElementById('dateGiven')) {
+            if (!isValidDate(dateexchange.value)) {
                 alert('Invalid date.');
                 dateexchange.style.borderColor = 'red';
                 return false;
             }
         }
         var placestype = document.getElementById('placestype');
-        if(placestype.selectedIndex == 0) {
+        if (placestype.selectedIndex == 0) {
             placestype.style.borderColor = 'red';
             alert('You must specify where the voucher was exchanged.');
             return false;
@@ -660,7 +681,7 @@ function validateVoucherForm() {
             placestype.style.borderColor = '';
         }
         var foodparcels = document.getElementById('foodparcels');
-        if(foodparcels.selectedIndex == -1) {
+        if (foodparcels.selectedIndex == -1) {
             foodparcels.style.borderColor = 'red';
             alert('You must specify which food parcels have been given.');
             return false;
