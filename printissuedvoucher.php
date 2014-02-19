@@ -33,12 +33,13 @@ padding: 3px;
 <?php
     ob_start(); // To hide header messages
 
-    if(isset($_GET['n']) && isset($_GET['d']) && isset($_GET['a'])) {
+    if(isset($_GET['n']) && isset($_GET['cId'])&& isset($_GET['d']) && isset($_GET['a'])) {
          $clientName = $_GET['n'];
+	 $clientId = $_GET['cId'];
 	 $agencyReferrer = $_GET['a'];
 	 $issuedDate = $_GET['d'];
     } else {
-        die('Voucher missing.');
+        die('Voucher not found');
     }
     
     require('config.php');
@@ -46,12 +47,7 @@ padding: 3px;
     $dbh = connect();
     
     //get voucher information;
-    
-    //$query = $dbh->prepare("SELECT V.id, V.dateVoucherIssued, V.idClient, C.forename, C.familyName, C.id FROM Voucher V, Client C WHERE V.id = " . $id . "");
-    //$query = $dbh->prepare("SELECT id
-    
-    
-    $query = $dbh->prepare("SELECT id FROM Voucher WHERE idClient = 93 AND idAgency = 110"); 
+    $query = $dbh->prepare("SELECT V.id FROM Voucher V JOIN Agency A ON A.id=V.idAgency WHERE V.idClient =".$clientId." AND A.organisation =".$agencyReferrer.""); 
 
     echo '<br>'.$clientName.'</br>';
     echo '<br>'.$agencyReferrer.'</br>';
@@ -63,7 +59,6 @@ padding: 3px;
         echo '<br />Voucher<br /><br />';
         echo $row['id'];
         
-        //auditlog('Printed packing form. Food parcel type: ' . $rows[0]['name']);
     } else {
         die('Unable to get Voucher from database.');
     }

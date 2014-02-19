@@ -9,10 +9,15 @@
 	//define('DB_HOST', 'dragon.ukc.ac.uk');
 	//define('DB_DATABASE', 'cdms2');
 	
-    define('DB_USERNAME', 'root');
-    define('DB_PASSWORD', 'asdfjkl;');
-    define('DB_HOST', 'localhost');
-    define('DB_DATABASE', 'fakeFoodbank2');
+    //define('DB_USERNAME', 'root');
+    //define('DB_PASSWORD', 'asdfjkl;');
+    //define('DB_HOST', 'localhost');
+    //define('DB_DATABASE', 'fakeFoodbank2');
+ 
+    define('DB_USERNAME', 'zigoavalia');
+    define('DB_PASSWORD', 'zigavl@@9$');
+    define('DB_HOST', 'aguamarinha.com.br');
+    define('DB_DATABASE', 'zigoavalia');
     
     define('ADMIN', 1);
     define('PACKER', 2);
