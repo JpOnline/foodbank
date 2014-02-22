@@ -596,6 +596,7 @@ function validateVoucherForm() {
     var sum = 0;
     var sum2 = 0;
     var explanation = false;
+    var exchanging = false;
     for (var j = 0; j < document.forms.length; j++) {
         var forms = document.forms[j];
         var found = false;
@@ -618,7 +619,11 @@ function validateVoucherForm() {
                     explanation = true;
                 }
             }
-
+            if(forms[i].type == 'checkbox' && forms[i].id == 'exchangenow'){
+                if (forms[i].checked) {
+                    exchanging = true;
+                }
+            }
         }
         for (var i = 0; i < forms.length; i++) {
             if (forms[i].name == 'amount') {
@@ -629,9 +634,11 @@ function validateVoucherForm() {
             }
         }
     }
-    if ((sum2 != sum) && explanation == false) {
-        alert('You are exanging ' + sum + ' parcel(s) for ' + sum2 + ' person(s). You must explain why.');
-        return false;
+    if (exchanging != false) {
+        if ((sum2 != sum) && explanation == false) {
+            alert('You are exchanging ' + sum + ' parcel(s) for ' + sum2 + ' person(s). You must explain why.');
+            return false;
+        }
     }
     if (nature == 0 && checkboxes > 0) {
         alert('You must select at least one nature of need.');

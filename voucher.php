@@ -333,11 +333,20 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 						    } else {
 								die('Unable to get food parcel types from database.<div><form action=\'voucher.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>');
 						    }
+						    if($editing){
+							    $query = $dbh->prepare("SELECT referenceNumber FROM FoodParcel WHERE idVoucher = :id and idFPType = :fptid");
+							    if($query->execute(array(":id" => $voucherRow['id'],":fptid" => $FPTRows[$k]['id']))) {
+									$fp2Count = $query->rowCount();
+									$fp2Rows = $query->fetchAll();
+							    } else {
+									die('Unable to get food parcel types from database.<div><form action=\'voucher.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>');
+							    }
+							}
 						?>
 							<tr>
 								<?PHP// if($readonly == '') { ?> <!-- isso aqui vai permitir mostrar  somente na area de trocar o voucher e não na visualização do voucher trocado  -->
 									<td><h3><?PHP echo $FPTRows[$k]['name'] ?></h3></td>
-									<td><input type='number' min = "0" step = "1" name='amount' pattern="\d+" id= '<?PHP echo $FPTRows[$k]['name'] ?>' value='<?PHP if($editing) echo $voucherRow['numberOfAdults']; else echo 0 ?>' maxlength='3' <?PHP echo $readonly; ?>></td>
+									<td><input type='number' min = "0" step = "1" name='amount' pattern="\d+" id= '<?PHP echo $FPTRows[$k]['name'] ?>' value='<?PHP if($editing) echo $fp2Count ;else echo 0 ?>' maxlength='3' <?PHP echo $readonly; ?>></td>
 								<?PHP// } ?>
 								<td><?PHP if($readonly == '') { ?>
 									<select id='foodparcels' name='foodparcels[]' style='width:100%;' multiple='multiple' >
@@ -370,10 +379,20 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 						</tr>
 						</table>
 						<tr>
+							<?PHP
+							if($editing){
+							    $query = $dbh->prepare("SELECT explanation FROM Exchange WHERE idVoucher = :id");
+							    if($query->execute(array(":id" => $voucherRow['id']))) {
+									$eCount = $query->rowCount();
+									$eRows = $query->fetchAll();
+							    } else {
+									die('Unable to get food parcel types from database.<div><form action=\'voucher.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>');
+							    }
+							}?>
 							<br></br>
 							<br><td><h3>Explanation why giving more parcels</h3></td></br>
 							<br><td><h3>than the amout of persons in a the voucher:</h3></td></br>
-							<td><textarea name='explanation' id='explanation' value='1' rows='5' style='resize:none; width:100%;' ></textarea></td>
+							<td><textarea name='explanation' id='explanation' value='1' rows='5' style='resize:none; width:100%;' <?PHP echo $readonly; ?>><?PHP if($readonly != '') { if($editing) { echo $eRows[0]['explanation'];}} ?></textarea></td>
 						</tr>
 						    <div><input class="form-input-button" type='submit' value='Submit' id='submit'></div>
 						</span>
@@ -395,6 +414,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
     $noadults = $_POST['noadults'];
     $nochildren = $_POST['nochildren'];
     $natureofneed = $_POST['natureofneed'];
+   	$explanation = $_POST['explanation'];
     $helping = strip_tags($_POST['helping']);
     if(isset($_POST['othernature']))
 	$othernature = strip_tags($_POST['othernature']);
@@ -496,7 +516,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 				if(!$query->execute(array(":id" => $id))) {
 				    die('<h1>Unable to update voucher database.</h1><div><form action=\'voucher.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
 				}
-				$query = $dbh->prepare("INSERT INTO Exchange (pointOfIssue, pointOfIssueType, date, idVoucher) VALUES (:poi, :poit, :d, :idv)");
+				$query = $dbh->prepare("INSERT INTO Exchange (pointOfIssue, pointOfIssueType, date, idVoucher, explanation) VALUES (:poi, :poit, :d, :idv, :e)");
 			} else {
 				$logmsg = 'Updated exchanged';
 				// Unsetting all the food parcels from this voucher
@@ -504,10 +524,10 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 				if(!$query->execute(array(":idv" => $id))) {
 				    die('<h1>Unable to update food parcel database.</h1><div><form action=\'voucher.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
 				}
-				$query = $dbh->prepare("UPDATE Exchange SET pointOfIssue = :poi, pointOfIssueType = :poit, date = :d WHERE idVoucher = :idv");
+				$query = $dbh->prepare("UPDATE Exchange SET pointOfIssue = :poi, pointOfIssueType = :poit, date = :d, explanation = :e WHERE idVoucher = :idv");
 			}
 
-		    if($query->execute(array(":poi" => $location, ":poit" => $typelocation, ":d" => $dategiven, ":idv" => $id))) {
+		    if($query->execute(array(":poi" => $location, ":poit" => $typelocation, ":d" => $dategiven, ":idv" => $id, ":e" => $explanation))) {
 				for($i = 0; $i < count($foodparcels); $i++) {
 				    $query = $dbh->prepare("UPDATE FoodParcel SET wasGiven = 1, idVoucher = :idv WHERE id = :idfp");
 				    if(!$query->execute(array(":idv" => $id, ":idfp" => $foodparcels[$i]))) {
