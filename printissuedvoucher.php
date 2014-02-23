@@ -37,30 +37,52 @@ padding: 3px;
          $clientName = $_GET['n'];
 	 $clientId = $_GET['cId'];
 	 $agencyReferrer = $_GET['a'];
-	 $issuedDate = $_GET['d'];
+	 $issuedDate = date('Y-m-d',strtotime($_GET['d']));
     } else {
-        die('Voucher not found');
+        die('Voucher not found, be sure that all fields were filled properly.');
     }
     
     require('config.php');
     require_once('log.php');
     $dbh = connect();
     
-    //get voucher information;
-    $query = $dbh->prepare("SELECT V.id FROM Voucher V JOIN Agency A ON A.id=V.idAgency WHERE V.idClient =".$clientId." AND A.organisation =".$agencyReferrer.""); 
-
-    echo '<br>'.$clientName.'</br>';
-    echo '<br>'.$agencyReferrer.'</br>';
-    echo '<br>'.$issuedDate.'</br>';
-
-    if($query->execute()) {
-        $row = $query->fetch();
-        
-        echo '<br />Voucher<br /><br />';
-        echo $row['id'];
-        
-    } else {
-        die('Unable to get Voucher from database.');
+    //get voucher id if is not a new voucher;
+    $query = $dbh->prepare("SELECT Voucher.id FROM Voucher, Agency WHERE Agency.id=Voucher.idAgency AND Voucher.wasExchanged=false AND Agency.organisation = '".$agencyReferrer."'AND Voucher.idClient =".$clientId." AND Voucher.dateVoucherIssued='".$issuedDate."' ORDER BY Voucher.id DESC"); 
+    if(!$query->execute()) {
+	die('Unable to get Voucher from database.');
     }
+    else{
+	$row = $query->fetch();
+	if($row['id']){ 
+	    echo '<br />Voucher<br />';
+	    echo '<br>id '.$row['id'].'</br>';
+	    echo '<br>agencyVoucherReference '.$row['agencyVoucherReference'].'</br>';
+	    echo '<br>numberOfAdults '.$row['numberOfAdults'].'</br>';
+	    echo '<br>numberOfChildren '.$row['numberOfChildren'].'</br>';
+	    echo '<br>wasExchanged '.$row['wasExchanged'].'</br>';
+	    echo '<br>helping '.$row['helping'].'</br>';
+	    echo '<br>dateVoucherIssued '.$row['dateVoucherIssued'].'</br>';
+	    echo '<br>idAgency '.$row['idAgency'].'</br>';
+	    echo '<br>organisation '.$row['organisation'].'</br>';
+	}
+	else  //show id of the next entry in the database
+	{
+	    $query = $dbh->prepare("SELECT id FROM Voucher WHERE wasExchanged=false ORDER BY id DESC LIMIT 1");
+	    if(!$query->execute()){
+		die('Unable to get Voucher from database.');
+	    }
+	    else{
+		$row = $query->fetch();
+		$voucherId = $row['id']+1; 
+
+		echo '<br>id '.$row['id'].'</br>'; 
+		echo '<br>'.$clientName.'</br>';
+		echo '<br>'.$agencyReferrer.'</br>';
+		echo '<br>'.$issuedDate.'</br>';
+	    }
+	}
+    }
+
+    echo '<img src="rw_common/images/Food-bank-logo_NEW.png" width="250" height="148">';
 ?>
 </body></html>

@@ -55,7 +55,7 @@ echo '<option value=\''.$cw['id'].'\'>'.$cw['centralWarehouseName'].'</option>';
 <?PHP
 for($j = 0; $j < $ficount; $j++) {
     echo '<tr><td><h3>' . $rowFI[$j]['Name'] . '</h3></td>';
-    echo '<td><input type=\'text\' size=\'20\' name=\'item['. $rowFI[$j]['id'] . ']\' maxlength=\'5\'></td>';
+    echo '<td><input type=\'number\' size=\'20\' name=\'item['. $rowFI[$j]['id'] . ']\' maxlength=\'5\'></td>';
     echo '</tr>';
 }
 ?>
