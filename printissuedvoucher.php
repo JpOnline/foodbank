@@ -78,7 +78,7 @@ table td {
     else{
 	$row = $query->fetch();
 	if($row['id']){ 
-	    echo 'id '.$row['id'].'</br>';
+	    echo ''.$row['id'].'</br>';
 	}
 	else  //show id of the next entry in the database
 	{
@@ -90,17 +90,14 @@ table td {
 		$row = $query->fetch();
 		$voucherId = $row['id']+1; 
 
-		echo '<br>id '.$row['id'].'</br>'; 
-		echo '<br>'.$clientName.'</br>';
-		echo '<br>'.$agencyReferrer.'</br>';
-		echo '<br>'.$issuedDate.'</br>';
+		echo '<br>'.$row['id'].'</br>'; 
 	    }
 	}
     }
     echo '</td></tr></table>';
     echo '<table border="1">';
 	echo '<tr><td>Clients fullname</td><td>'.$clientName.'</td></tr>';
-	echo '<tr><td>Referer</td><td>'.$agencyReferrer.'</td></tr>';
+	echo '<tr><td>Referrer</td><td>'.$agencyReferrer.'</td></tr>';
 	echo '<tr><td>Date</td><td>'.$_GET['d'].'</td></tr>';
     echo '</table>';
     echo '<h5>1 The Canterbury Food Bank distribution centre is only open at the times stated above;<br>
