@@ -8,11 +8,11 @@
     $response = '';
     
     if($t == 'cw') {
-		$query = $dbh->prepare("SELECT id, centralWarehouseName as name FROM Warehouse");
+		$query = $dbh->prepare("SELECT id, centralWarehouseName as name FROM Warehouse WHERE deleted = 0 ORDER BY name");
     } else if($t == 'dp') {
-		$query = $dbh->prepare("SELECT id, distributionPointName as name FROM DistributionPoint");
+		$query = $dbh->prepare("SELECT id, distributionPointName as name FROM DistributionPoint WHERE deleted = 0 ORDER BY name");
     } else if($t == 'agency') {
-        $query = $dbh->prepare("SELECT id, organisation as name FROM Agency");
+        $query = $dbh->prepare("SELECT id, organisation as name FROM Agency WHERE deleted = 0 ORDER BY name");
     }
 
     if($query->execute()) {

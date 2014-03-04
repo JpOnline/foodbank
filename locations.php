@@ -93,9 +93,19 @@
         </table></div>
         <div>
         	<?PHP if($readonly == '') { ?>
-        		<input class="form-input-button" type='submit' value='Submit'>
-        	<?PHP } ?>
+        		<input class="form-input-button" type='submit' value='Submit'>             
+            <?PHP } ?>
 		</form>
+        <?PHP if($readonly == '') { ?>
+            <?PHP if($editing) { ?>
+                <form action='locations.php' method='post' onsubmit="return validateForm()" >
+                    <input type='hidden' name='mode' value='deleteag'>
+                    <input type='hidden' name='deleting' value='1'>
+                    <input type='hidden' name='id' value='<?PHP echo $id; ?>'>
+                    <input class="form-input-button" type='submit' id='delete' value='delete'>
+                </form>
+            <?PHP } ?>
+        <?PHP } ?>
         <form><input class="form-input-button" type='button' value='Back' onclick="window.history.back()"></form>
         </div>
         <?PHP
@@ -120,10 +130,21 @@
             $redirectmsg = '<h1>Agency created successfully</h1>';
             $logmsg = 'Added new agency. Name:' . $organisation;
         }
-        
         if($query->execute(array(":org" => $organisation, ":rcr" => $rcr, ":ht" => $hometelephone, ":mt" => $mobiletelephone, ":a1" => $address1, ":a2" => $address2, ":p" => $postcode, ":t" => $town))) {
             redirect('locations.php', $redirectmsg);
             auditlog($logmsg);
+        } else {
+            die('<h1>Error</h1><br /><h3>Unable to update agencies database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+        }
+
+
+    } else if(isset($_POST['mode']) && $_POST['mode'] == 'deleteag') {
+        $dbh = connect();
+        $id = $_POST['id'];
+        $query = $dbh->prepare("UPDATE Agency SET deleted = :del WHERE id = " . $id);
+        $redirectmsg = '<h1>Agency deleted successfully</h1>';
+        if($query->execute(array(":del" => 1 ))) {
+            redirect('locations.php', $redirectmsg);
         } else {
             die('<h1>Error</h1><br /><h3>Unable to update agencies database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
         }
@@ -195,6 +216,17 @@
         		<input class="form-input-button" type='submit' value='Submit'>
 			<?PHP } ?>
             </form>
+            </form>
+            <?PHP if($readonly == '') { ?>
+                <?PHP if($editing) { ?>
+                <form action='locations.php' method='post' onsubmit="return validateForm()" >
+                    <input type='hidden' name='mode' value='deletedp'>
+                    <input type='hidden' name='deleting' value='1'>
+                    <input type='hidden' name='id' value='<?PHP echo $id; ?>'>
+                    <input class="form-input-button" type='submit' id='delete' value='delete'>
+                </form>
+                <?PHP } ?>
+            <?PHP } ?>
         <form><input class="form-input-button" type='button' value='Back' onclick="window.history.back()"></form>
         </div>
 		<?PHP
@@ -222,6 +254,16 @@
         if($query->execute(array(":dpn" => $dpname, ":ht" => $hometelephone, ":mt" => $mobiletelephone, ":a1" => $address1, ":a2" => $address2, ":p" => $postcode, ":t" => $town))) {
             redirect('locations.php', $redirectmsg);
             auditlog($logmsg);
+        } else {
+            die('<h1>Error</h1><br /><h3>Unable to update distribution point database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+        }
+    } else if(isset($_POST['mode']) && $_POST['mode'] == 'deletedp') {
+        $dbh = connect();
+        $id = $_POST['id'];
+        $query = $dbh->prepare("UPDATE DistributionPoint SET deleted = :del WHERE id = " . $id);
+        $redirectmsg = '<h1>Distribution point deleted successfully</h1>';
+        if($query->execute(array(":del" => 1))) {
+            redirect('locations.php', $redirectmsg);
         } else {
             die('<h1>Error</h1><br /><h3>Unable to update distribution point database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
         }
@@ -293,6 +335,17 @@
 				<input class="form-input-button" type='submit' value='Submit'>
 			<?PHP } ?>
 				</form>
+                </form>
+                <?PHP if($readonly == '') { ?>
+                    <?PHP if($editing) { ?>
+                        <form action='locations.php' method='post' onsubmit="return validateForm()" >
+                            <input type='hidden' name='mode' value='deletecw'>
+                            <input type='hidden' name='deleting' value='1'>
+                            <input type='hidden' name='id' value='<?PHP echo $id; ?>'>
+                            <input class="form-input-button" type='submit' id='delete' value='delete'>
+                        </form>
+                    <?PHP } ?>
+                <?PHP } ?>
 				<form><input class="form-input-button" type='button' value='Back' onclick="window.history.back()"></form>
             </div>
 		<?PHP
@@ -310,11 +363,11 @@
             $id = $_POST['id'];
 			$query = $dbh->prepare("UPDATE Warehouse SET centralWarehouseName = :cwn, homeTelephone = :ht, mobileTelephone = :mt, address1 = :a1, address2 = :a2, postcode = :p, town = :t WHERE id = " . $id);
             $redirectmsg = '<h1>Warehouse updated successfully</h1>';
-            $logmsg = 'Updated warehouse information. Name:' . $dpname;
+            $logmsg = 'Updated warehouse information. Name:' . $cwname;
         } else if(isset($_POST['adding'])) {
 			$query = $dbh->prepare("INSERT INTO Warehouse (centralWarehouseName, homeTelephone, mobileTelephone, address1, address2, postcode, town) VALUES (:cwn, :ht, :mt, :a1, :a2, :p, :t)");
             $redirectmsg = '<h1>Warehouse added successfully</h1>';
-            $logmsg = 'Added new warehouse. Name:' . $dpname;
+            $logmsg = 'Added new warehouse. Name:' . $cwname;
         }
         
         if($query->execute(array(":cwn" => $cwname, ":ht" => $hometelephone, ":mt" => $mobiletelephone, ":a1" => $address1, ":a2" => $address2, ":p" => $postcode, ":t" => $town))) {
@@ -323,10 +376,22 @@
         } else {
             die('<h1>Error</h1><br /><h3>Unable to update Warehouse database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
         }
+    } else if(isset($_POST['mode']) && $_POST['mode'] == 'deletecw') {
+        $dbh = connect();
+        $id = $_POST['id'];
+        $query = $dbh->prepare("UPDATE Warehouse SET deleted = :del WHERE id = " . $id);
+        $redirectmsg = '<h1>Warehouse deleted successfully</h1>';
+        if($query->execute(array(":del" => 1))) {
+            redirect('locations.php', $redirectmsg);
+        } else {
+            die('<h1>Error</h1><br /><h3>Unable to update warehouse database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+        }
+
+
     } else {
         $dbh = connect();
         
-        $query = $dbh->prepare("SELECT id, organisation, homeTelephone, mobileTelephone, town FROM Agency ORDER BY organisation ASC");
+        $query = $dbh->prepare("SELECT id, organisation, homeTelephone, mobileTelephone, town, deleted FROM Agency ORDER BY organisation ASC");
         if($query->execute()) {
             $rowsAgency = $query->fetchAll();
             $agencyCount = $query->rowCount();
@@ -334,7 +399,7 @@
             die('<h1>Error</h1><br /><h3>Unable to get agencies information from database.</h3><div>');
         }
 
-        $query = $dbh->prepare("SELECT id, distributionPointName, homeTelephone, mobileTelephone, town FROM DistributionPoint ORDER BY distributionPointName ASC");
+        $query = $dbh->prepare("SELECT id, distributionPointName, homeTelephone, mobileTelephone, town, deleted FROM DistributionPoint ORDER BY distributionPointName ASC");
         if($query->execute()) {
             $rowsDP = $query->fetchAll();
             $DPCount = $query->rowCount();
@@ -342,7 +407,7 @@
             die('<h1>Error</h1><br /><h3>Unable to get distribution points information from database.</h3><div>');
         }
         
-        $query = $dbh->prepare("SELECT id, centralWarehouseName, homeTelephone, mobileTelephone, town FROM Warehouse ORDER BY centralWarehouseName ASC");
+        $query = $dbh->prepare("SELECT id, centralWarehouseName, homeTelephone, mobileTelephone, town, deleted FROM Warehouse ORDER BY centralWarehouseName ASC");
         if($query->execute()) {
             $rowsWarehouse = $query->fetchAll();
             $warehouseCount = $query->rowCount();
@@ -361,18 +426,20 @@
 					<td><h3>Town</h3></td>
 					<td>&nbsp;</td>
 				</thead>
-				<?PHP for($i = 0; $i < $agencyCount; $i++) { ?>
-                	<tr>
-						<td><?PHP echo $rowsAgency[$i]['organisation'];?></td>
-						<td><?PHP echo $rowsAgency[$i]['homeTelephone'];?></td>
-						<td><?PHP echo $rowsAgency[$i]['mobileTelephone'];?></td>
-						<td><?PHP echo $rowsAgency[$i]['town'];?></td>
-						<td><form action='locations.php' method='get'>
-							<input type='hidden' name='mode' value='viewag'>
-							<input type='hidden' name='id' value='<?PHP echo $rowsAgency[$i]['id'];?>'>
-							<input class="form-input-button" type='submit' value='View'></form></td>
-					</tr>
-				<?PHP } ?>
+				<?PHP for($i = 0; $i < $agencyCount; $i++) { 
+                    if($rowsAgency[$i]['deleted'] != 1){ ?>
+                    	<tr>
+    						<td><?PHP echo $rowsAgency[$i]['organisation'];?></td>
+    						<td><?PHP echo $rowsAgency[$i]['homeTelephone'];?></td>
+    						<td><?PHP echo $rowsAgency[$i]['mobileTelephone'];?></td>
+    						<td><?PHP echo $rowsAgency[$i]['town'];?></td>
+    						<td><form action='locations.php' method='get'>
+    							<input type='hidden' name='mode' value='viewag'>
+    							<input type='hidden' name='id' value='<?PHP echo $rowsAgency[$i]['id'];?>'>
+    							<input class="form-input-button" type='submit' value='View'></form></td>
+    					</tr>
+    				<?PHP }
+                } ?>
     	</table></div>
     <?PHP if($readonly == '') { ?>
         <div><form action='locations.php' mode='get'><input type='hidden' name='mode' value='addag'><input class="form-input-button" type='submit' value='Add new Agency'></div><br /></form>
@@ -386,18 +453,20 @@
 				<td><h3>Town</h3></td>
                 <td>&nbsp;</td>
 			</thead>
-            <?PHP for($i = 0; $i < $DPCount; $i++) { ?>
-				<tr>
-					<td><?PHP echo $rowsDP[$i]['distributionPointName'];?></td>
-					<td><?PHP echo $rowsDP[$i]['homeTelephone'];?></td>
-					<td><?PHP echo $rowsDP[$i]['mobileTelephone'];?></td>
-					<td><?PHP echo $rowsDP[$i]['town'];?></td>
-					<td><form action='locations.php' method='get'>
-						<input type='hidden' name='mode' value='viewdp'>
-						<input type='hidden' name='id' value='<?PHP echo $rowsDP[$i]['id'];?>'>
-						<input class="form-input-button" type='submit' value='View'></form></td>
-				</tr>
-			<?PHP } ?>
+            <?PHP for($i = 0; $i < $DPCount; $i++) { 
+                if($rowsDP[$i]['deleted'] != 1){ ?>
+    				<tr>
+    					<td><?PHP echo $rowsDP[$i]['distributionPointName'];?></td>
+    					<td><?PHP echo $rowsDP[$i]['homeTelephone'];?></td>
+    					<td><?PHP echo $rowsDP[$i]['mobileTelephone'];?></td>
+    					<td><?PHP echo $rowsDP[$i]['town'];?></td>
+    					<td><form action='locations.php' method='get'>
+    						<input type='hidden' name='mode' value='viewdp'>
+    						<input type='hidden' name='id' value='<?PHP echo $rowsDP[$i]['id'];?>'>
+    						<input class="form-input-button" type='submit' value='View'></form></td>
+    				</tr>
+    			<?PHP }
+            } ?>
     	</table></div>
 	<?PHP if($readonly == '') { ?>
         <div><form action='locations.php' mode='get'><input type='hidden' name='mode' value='adddp'><input class="form-input-button" type='submit' value='Add new Distribution Point'></div><br /></form>
@@ -411,18 +480,20 @@
 				<td><h3>Town</h3></td>
 				<td>&nbsp;</td>
             </thead>
-            <?PHP for($i = 0; $i < $warehouseCount; $i++) { ?>
-				<tr>
-					<td><?PHP echo $rowsWarehouse[$i]['centralWarehouseName'];?></td>
-					<td><?PHP echo $rowsWarehouse[$i]['homeTelephone'];?></td>
-					<td><?PHP echo $rowsWarehouse[$i]['mobileTelephone'];?></td>
-					<td><?PHP echo $rowsWarehouse[$i]['town'];?></td>
-					<td><form action='locations.php' method='get'>
-						<input type='hidden' name='mode' value='viewcw'>
-						<input type='hidden' name='id' value='<?PHP echo $rowsWarehouse[$i]['id'];?>'>
-						<input class="form-input-button" type='submit' value='View'></form></td>
-				</tr>
-			<?PHP } ?>
+            <?PHP for($i = 0; $i < $warehouseCount; $i++) { 
+                if($rowsWarehouse[$i]['deleted'] != 1){ ?>
+    				<tr>
+    					<td><?PHP echo $rowsWarehouse[$i]['centralWarehouseName'];?></td>
+    					<td><?PHP echo $rowsWarehouse[$i]['homeTelephone'];?></td>
+    					<td><?PHP echo $rowsWarehouse[$i]['mobileTelephone'];?></td>
+    					<td><?PHP echo $rowsWarehouse[$i]['town'];?></td>
+    					<td><form action='locations.php' method='get'>
+    						<input type='hidden' name='mode' value='viewcw'>
+    						<input type='hidden' name='id' value='<?PHP echo $rowsWarehouse[$i]['id'];?>'>
+    						<input class="form-input-button" type='submit' value='View'></form></td>
+    				</tr>
+    			<?PHP }
+            } ?>
     	</table></div>
     <?PHP if($readonly == '') { ?>
         <div><form action='locations.php' mode='get'><input type='hidden' name='mode' value='addcw'><input class="form-input-button" type='submit' value='Add new Central Warehouse'></div></form>

@@ -25,10 +25,10 @@ if($query->execute()) {
 }
 
 if(isset($_POST['foodin'])) { // Add item
-    $query = $dbh->prepare("SELECT centralWarehouseName, id FROM Warehouse");
+    $query = $dbh->prepare("SELECT centralWarehouseName, id FROM Warehouse WHERE deleted = 0  ORDER BY centralWarehouseName");
     if($query->execute()) {
-	$cwcount = $query->rowCount();
-	$rowCW = $query->fetchAll();
+		$cwcount = $query->rowCount();
+		$rowCW = $query->fetchAll();
     } else {
 	die('<h1>Error</h1><br /><h3>Unable to select warehouses from database.</h3>');
     }
@@ -224,7 +224,7 @@ echo '<option value=\''.$cw['id'].'\'>'.$cw['centralWarehouseName'].'</option>';
 } else {
     $dbh = connect();
 
-    $query = $dbh->prepare("SELECT centralWarehouseName, id FROM Warehouse");
+    $query = $dbh->prepare("SELECT centralWarehouseName, id FROM Warehouse WHERE deleted = 0 ORDER BY centralWarehouseName");
     if($query->execute()) {
 	$cwcount = $query->rowCount();
 	$rowCW = $query->fetchAll();

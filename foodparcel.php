@@ -176,7 +176,7 @@
 			</tr>
         </table></div>
         <div>
-        <?PHP if(getAuth($_SESSION['user']['auth'], PACKER)) { ?>
+        <?PHP if(getAuth($_SESSION['user']['auth'], PACKER) || getAuth($_SESSION['user']['auth'], ADMIN)) { ?>
             <input class="form-input-button" type='submit' id='submit' value='Submit'>
             </form>
             <?PHP if($editing) { ?>

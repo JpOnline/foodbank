@@ -29,7 +29,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
     $dbh = connect();
     $exchanged = false;
 
-    $query = $dbh->prepare("SELECT id, organisation FROM Agency");
+    $query = $dbh->prepare("SELECT id, organisation, deleted FROM Agency ORDER BY organisation");
     if($query->execute()) {
 		$agencyCount = $query->rowCount();
 		$agencyRows = $query->fetchAll();
@@ -79,7 +79,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 								    $exchangeCount = $query->rowCount();
 
 								    if($exchangeRows[0]['pointOfIssueType'] == 'agency') {
-										$query = $dbh->prepare("SELECT id, organisation as name FROM Agency");
+										$query = $dbh->prepare("SELECT id, deleted, organisation as name FROM Agency ORDER BY name");
 										if($query->execute()) {
 										    $rowsLocation = $query->fetchAll();
 										    $locationCount = $query->rowCount();
@@ -87,7 +87,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 										    die('Unable to get agency information from database.<div><form action=\'voucher.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>');
 										}
 								    } else if($exchangeRows[0]['pointOfIssueType'] == 'dp') {
-										$query = $dbh->prepare("SELECT id, distributionPointName as name FROM DistributionPoint");
+										$query = $dbh->prepare("SELECT id, deleted,  distributionPointName as name FROM DistributionPoint ORDER BY name");
 										if($query->execute()) {
 										    $rowsLocation = $query->fetchAll();
 										    $locationCount = $query->rowCount();
@@ -95,7 +95,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 										    die('Unable to get distribution point information from database.<div><form action=\'voucher.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>');
 										}
 								    } else if($exchangeRows[0]['pointOfIssueType'] == 'cw') {
-										$query = $dbh->prepare("SELECT id, centralWarehouseName as name FROM Warehouse");
+										$query = $dbh->prepare("SELECT id, deleted, centralWarehouseName as name FROM Warehouse ORDER BY name");
 										if($query->execute()) {
 										    $rowsLocation = $query->fetchAll();
 										    $locationCount = $query->rowCount();
@@ -141,23 +141,29 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 					<td><h3>Agency Referrer</h3></td>
 					<td>
 					    <?PHP if($readonly == '') { ?>
-						<select name='agencyreferrer' id='agencyreferrer'>
+							<select name='agencyreferrer' id='agencyreferrer'>
 					    <?PHP } ?>
 					    <?PHP for($i = 0; $i < $agencyCount; $i++) { ?>
-						<?PHP if($editing && $agencyRows[$i]['id'] == $voucherRow['idAgency']) {
-						    $selected = 'selected=\'selected\'';
-						    $agencyName = $agencyRows[$i]['organisation'];
-						} else {
-						    $selected = '';
-						}
-						if($readonly == '') { ?>
-						    <option value='<?PHP echo $agencyRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $agencyRows[$i]['organisation']; ?></option>
-						<?PHP }
+							<?PHP if($editing && $agencyRows[$i]['id'] == $voucherRow['idAgency']) {
+							    $selected = 'selected=\'selected\'';
+							    $agencyName = $agencyRows[$i]['organisation'];
+							} else {
+							    $selected = '';
+							}
+							if($readonly == '') { 
+								if(!$editing){
+									if($agencyRows[$i]['deleted'] != 1){ ?>
+								   		<option value='<?PHP echo $agencyRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $agencyRows[$i]['organisation']; ?></option>
+									<?PHP }
+								}else {?>
+									<option value='<?PHP echo $agencyRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $agencyRows[$i]['organisation']; ?></option>
+								<?PHP }
+							}
 					    }
 					    if($readonly == '') { ?>
-						</select>
+							</select>
 					    <?PHP } else { ?>
-						<input type='hidden' name='agencyreferrer' value='<?PHP echo $voucherRow['idAgency']; ?>'><h5><?PHP echo $agencyName; ?></h5>
+							<input type='hidden' name='agencyreferrer' value='<?PHP echo $voucherRow['idAgency']; ?>'><h5><?PHP echo $agencyName; ?></h5>
 					    <?PHP } ?>
 					</td>
 				    </tr>
@@ -185,12 +191,18 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 						    } else {
 							$selected = '';
 						    }
-						    if($readonly == '') {?>
-							<option value='<?PHP echo $clientRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $clientRows[$i]['forename'].' '.$clientRows[$i]['familyName']; ?></option>
-						    <?PHP }
+						    if($readonly == '') {
+						    	if(!$edited){
+								    if($clientRows[$i]['deleted'] != 1){?>
+										<option value='<?PHP echo $clientRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $clientRows[$i]['forename'].' '.$clientRows[$i]['familyName']; ?></option>
+								    <?PHP }
+								}else{?>
+									<option value='<?PHP echo $clientRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $clientRows[$i]['forename'].' '.$clientRows[$i]['familyName']; ?></option>
+								<?PHP }
+							}
 						}
 						if($readonly == '') { ?>
-						    </select>&nbsp;&nbsp;&nbsp;<a href='client.php?mode=add'>new Client</a></h5>
+							</select>&nbsp;&nbsp;&nbsp;<a  href='client.php?mode=add'>new Client</a></h5>
 						<?PHP } else { ?>
 						    <input type='hidden' name='client' value='<?PHP echo $voucherRow['idClient']; ?>'><h5><?PHP echo $clientName; ?></h5>
 						<?PHP } ?>
@@ -278,42 +290,42 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 					<td><h3>Point of Issue</h3></td>
 					<td> 
 					    <?PHP if($readonly == '') { ?>
-						<select id='placestype' name='placestype' onchange="getplaces()" <?PHP if(!$exchanged) echo 'disabled'; ?>>
+							<select id='placestype' name='placestype' onchange="getplaces()" <?PHP if(!$exchanged) echo 'disabled'; ?>>
 						    <option value=''>Select Location</option>
 						    <option value='agency' <?PHP if($exchanged && $exchangeRows[0]['pointOfIssueType'] == 'agency') echo 'selected=\'selected\'' ?>>Agency</option>
 						    <option value='dp' <?PHP if($exchanged && $exchangeRows[0]['pointOfIssueType'] == 'dp') echo 'selected=\'selected\'' ?>>Distribution Point</option>
 						    <option value='cw' <?PHP if($exchanged && $exchangeRows[0]['pointOfIssueType'] == 'cw') echo 'selected=\'selected\'' ?>>Central Warehouse</option> 
-						</select><br />
-						<span id='getplaces'><select name='location' id='location' <?PHP if(!$exchanged) echo 'disabled'; ?>>
+							</select><br />
+							<span id='getplaces'><select name='location' id='location' <?PHP if(!$exchanged) echo 'disabled'; ?>>
 					    <?PHP } else { ?>
-						<?PHP if($exchangeRows[0]['pointOfIssueType'] == 'agency') { ?>
-						    <option value='agency' <?PHP if($exchangeRows[0]['pointOfIssueType'] == 'agency') echo 'selected=\'selected\'' ?>>Agency</option>
-						    <?PHP if($readonly != '') { ?>
-							    <input type='hidden' name='placestype' value='agency'>
-						    <?PHP } ?>
+							<?PHP if($exchangeRows[0]['pointOfIssueType'] == 'agency') { ?>
+							    <option value='agency' <?PHP if($exchangeRows[0]['pointOfIssueType'] == 'agency') echo 'selected=\'selected\'' ?>>Agency</option>
+							    <?PHP if($readonly != '') { ?>
+								    <input type='hidden' name='placestype' value='agency'>
+							    <?PHP } ?>
 						    <?PHP } else if($exchangeRows[0]['pointOfIssueType'] == 'dp') { ?>
-							<option value='dp' <?PHP if($exchangeRows[0]['pointOfIssueType'] == 'dp') echo 'selected=\'selected\'' ?>>Distribution Point</option>
-						    <?PHP if($readonly != '') { ?>
-							<input type='hidden' name='placestype' value='dp'>
-						    <?PHP } ?>
+								<option value='dp' <?PHP if($exchangeRows[0]['pointOfIssueType'] == 'dp') echo 'selected=\'selected\'' ?>>Distribution Point</option>
+							    <?PHP if($readonly != '') { ?>
+								<input type='hidden' name='placestype' value='dp'>
+							    <?PHP } ?>
 						    <?PHP } else if($exchangeRows[0]['pointOfIssueType'] == 'cw') { ?>
-							<option value='cw' <?PHP if($exchangeRows[0]['pointOfIssueType'] == 'cw') echo 'selected=\'selected\'' ?>>Central Warehouse</option></select><br />
-							<?PHP if($readonly != '') { ?>
-							    <input type='hidden' name='placestype' value='cw'>
-							<?PHP } ?>
+								<option value='cw' <?PHP if($exchangeRows[0]['pointOfIssueType'] == 'cw') echo 'selected=\'selected\'' ?>>Central Warehouse</option></select><br />
+								<?PHP if($readonly != '') { ?>
+								    <input type='hidden' name='placestype' value='cw'>
+								<?PHP } ?>
 						    <?PHP } ?>
 					    <?PHP } ?>
 					    <?PHP for($i = 0; $i < $locationCount; $i++) {
-						$selected = ($exchanged && $rowsLocation[$i]['id'] == $exchangeRows[0]['pointOfIssue']) ? 'selected=\'selected\'' : ''; ?>
-						<?PHP if($readonly == '' || ($readonly != '' && $selected != '')) { ?>
-						    <option value='<?PHP echo $rowsLocation[$i]['id'] ?>' <?PHP echo $selected; ?>><?PHP echo $rowsLocation[$i]['name']; ?></option>
-						    <?PHP if($readonly != '') { ?>
-							<input type='hidden' name='location' value='<?PHP echo $rowsLocation[$i]['id'] ?>'>
-						    <?PHP } ?>
-						<?PHP } ?>
+							$selected = ($exchanged && $rowsLocation[$i]['id'] == $exchangeRows[0]['pointOfIssue']) ? 'selected=\'selected\'' : ''; ?>
+							<?PHP if($readonly == '' || ($readonly != '' && $selected != '')) { ?>
+								<option value='<?PHP echo $rowsLocation[$i]['id'] ?>' <?PHP echo $selected; ?>><?PHP echo $rowsLocation[$i]['name']; ?></option>
+									<?PHP if($readonly != '') {  ?>
+									<input type='hidden' name='location' value='<?PHP echo $rowsLocation[$i]['id'] ?>'>
+								<?PHP } ?>
+							<?PHP } ?>
 					    <?PHP } ?>
 					    <?PHP if($readonly == '') { ?>
-						</select></span>
+							</select></span>
 					    <?PHP } ?>
 					</td>
 				    </tr>
