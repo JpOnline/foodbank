@@ -216,6 +216,12 @@
                 	<input class="form-input-button" type='submit' value='Update'>
 				<?PHP } ?>
 				</form>
+                <form action='client.php' method='post' onsubmit="return validateForm()" >
+                    <input type='hidden' name='mode' value='delete'>
+                    <input type='hidden' name='deleting' value='1'>
+                    <input type='hidden' name='id' value='<?PHP echo $id; ?>'>
+                    <input class="form-input-button" type='submit' id='delete' value='delete'>
+                </form>
 				<form><input class="form-input-button" type='submit' value='Back'></form>
 	        </div><br /><hr><br />
 			<?PHP
@@ -416,10 +422,19 @@
                 die('<h1>Error</h1><br /><h3>Unable to update client database.</h3><div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
             }
     	}
-        
+    } else if(isset($_POST['mode']) && $_POST['mode'] == 'delete') { 
+        $dbh = connect();
+        $id = $_POST['id'];
+        $query = $dbh->prepare("UPDATE Client SET deleted = :del WHERE id = " . $id);
+        $redirectmsg = '<h1>Client deleted successfully</h1>';
+        if($query->execute(array(":del" => 1 ))) {
+            redirect('client.php', $redirectmsg);
+        } else {
+            die('<h1>Error</h1><br /><h3>Unable to update client database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+        }
     } else {
         $dbh = connect();
-        $query = $dbh->prepare("SELECT id, familyName, forename, postcode FROM Client ORDER BY familyName ASC");
+        $query = $dbh->prepare("SELECT id, familyName, forename, postcode FROM Client WHERE deleted = 0 ORDER BY familyName ASC");
         
         if($query->execute()) {
             $clientRows = $query->fetchAll();

@@ -37,7 +37,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 		die('<h1>Unable to get agency information from database.</h1><div><form action=\'voucher.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
     }
 
-    $query = $dbh->prepare("SELECT id, familyName, forename, address1, address2, postcode, town FROM Client ORDER BY forename ASC");
+    $query = $dbh->prepare("SELECT id, familyName, forename, address1, address2, postcode, town, deleted FROM Client ORDER BY forename ASC");
     if($query->execute()) {
 		$clientCount = $query->rowCount();
 		$clientRows = $query->fetchAll();
@@ -192,13 +192,13 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 							$selected = '';
 						    }
 						    if($readonly == '') {
-						    	if(!$edited){
-								    if($clientRows[$i]['deleted'] != 1){?>
+						    	if($editing){?>
+									<option value='<?PHP echo $clientRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $clientRows[$i]['forename'].' '.$clientRows[$i]['familyName']; ?></option>			
+								<?PHP }else{
+									if($clientRows[$i]['deleted'] != 1){?>
 										<option value='<?PHP echo $clientRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $clientRows[$i]['forename'].' '.$clientRows[$i]['familyName']; ?></option>
 								    <?PHP }
-								}else{?>
-									<option value='<?PHP echo $clientRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $clientRows[$i]['forename'].' '.$clientRows[$i]['familyName']; ?></option>
-								<?PHP }
+								}
 							}
 						}
 						if($readonly == '') { ?>
