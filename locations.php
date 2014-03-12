@@ -63,9 +63,17 @@
 				<td><input type='text' value='<?PHP if($editing) echo $row['organisation']; ?>' name='organisation' size='30' maxlength='32' <?PHP echo $readonly; ?>></td>
         	</tr>
         	<tr>
-        		<td><h3>Referral centre reference *</h3></td>
-        		<td><input type='text' value='<?PHP if($editing) echo $row['referralCentreReference']; ?>' name='rcr' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
-        	</tr>
+                <td><h3>Referral centre reference *</h3></td>
+                <td><input type='text' value='<?PHP if($editing) echo $row['referralCentreReference']; ?>' name='rcr' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
+            </tr>
+            <tr>
+                <td><h3>Area of Assitance *</h3></td>
+                <td><input type='text' value='<?PHP if($editing) echo $row['areaOfAssistance']; ?>' name='areaOfAssistance' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
+            </tr>
+            <tr>
+                <td><h3>Web Adress *</h3></td>
+                <td><input type='text' value='<?PHP if($editing) echo $row['webAddress']; ?>' name='webAddress' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
+            </tr>
         	<tr>
         		<td><h3>Home telephone number</h3></td>
         		<td><input type='text' value='<?PHP if($editing) echo $row['homeTelephone']; ?>' name='hometelephone' id='opt' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
@@ -113,6 +121,8 @@
         $dbh = connect();
         $organisation = strip_tags($_POST['organisation']);
         $rcr = strip_tags($_POST['rcr']);
+        $AoA = strip_tags($_POST['areaOfAssistance']);
+        $webAddress = strip_tags($_POST['webAddress']);
         $hometelephone = strip_tags($_POST['hometelephone']);
         $mobiletelephone = strip_tags($_POST['mobiletelephone']);
         $address1 = strip_tags($_POST['address1']);
@@ -122,15 +132,15 @@
         
         if(isset($_POST['editing'])) {
             $id = $_POST['id'];
-			$query = $dbh->prepare("UPDATE Agency SET organisation = :org, referralCentreReference = :rcr, homeTelephone = :ht, mobileTelephone = :mt, address1 = :a1, address2 = :a2, postcode = :p, town = :t WHERE id = " . $id);
+			$query = $dbh->prepare("UPDATE Agency SET organisation = :org, referralCentreReference = :rcr, homeTelephone = :ht, mobileTelephone = :mt, address1 = :a1, address2 = :a2, postcode = :p, town = :t , areaOfAssistance = :aoa, webAddress = :wa WHERE id = " . $id);
             $redirectmsg = '<h1>Agency updated successfully</h1>';
             $logmsg = 'Updated agency information. Name:' . $organisation;
         } else if(isset($_POST['adding'])) {
-			$query = $dbh->prepare("INSERT INTO Agency (organisation, referralCentreReference, homeTelephone, mobileTelephone, address1, address2, postcode, town) VALUES (:org, :rcr, :ht, :mt, :a1, :a2, :p, :t)");
+			$query = $dbh->prepare("INSERT INTO Agency (organisation, referralCentreReference, homeTelephone, mobileTelephone, address1, address2, postcode, town, areaOfAssistance, webAddress) VALUES (:org, :rcr, :ht, :mt, :a1, :a2, :p, :t, :aoa, :wa)");
             $redirectmsg = '<h1>Agency created successfully</h1>';
             $logmsg = 'Added new agency. Name:' . $organisation;
         }
-        if($query->execute(array(":org" => $organisation, ":rcr" => $rcr, ":ht" => $hometelephone, ":mt" => $mobiletelephone, ":a1" => $address1, ":a2" => $address2, ":p" => $postcode, ":t" => $town))) {
+        if($query->execute(array(":org" => $organisation, ":rcr" => $rcr, ":ht" => $hometelephone, ":mt" => $mobiletelephone, ":a1" => $address1, ":a2" => $address2, ":p" => $postcode, ":t" => $town, ":aoa" => $AoA, ":wa" => $webAddress))) {
             redirect('locations.php', $redirectmsg);
             auditlog($logmsg);
         } else {

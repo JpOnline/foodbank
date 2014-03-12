@@ -171,6 +171,10 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 					    <td><h3>Agency Voucher Reference (optional)</h3></td>
 					    <td><input type='text' name='agvoucherref' value='<?PHP if($editing) echo $voucherRow['agencyVoucherReference']; ?>' maxlength='20' id='opt' <?PHP echo $readonly; ?>></td>
 					</tr>
+					<tr>
+					    <td><h3>Agency Contact Name</h3></td>
+					    <td><input type='text' name='agContactName' value='<?PHP if($editing) echo $voucherRow['agencyContactName']; ?>' maxlength='20' id='opt' <?PHP echo $readonly; ?>></td>
+					</tr>
 				    <tr>
 					<td><h3>Date Voucher Issued</h3></td>
 					<td><input type='text' id='datevoucherissued' name='datevoucherissued' value='<?PHP if($editing) echo date('d-m-Y', strtotime($voucherRow['dateVoucherIssued'])); else echo date('d-m-Y'); ?>' maxlength='10' <?PHP echo $readonly; ?>></td>
@@ -421,6 +425,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 } else if(isset($_POST['mode']) && $_POST['mode'] == 'update') {
     $agency = $_POST['agencyreferrer'];
     $agencyRef = $_POST['agvoucherref'];
+    $agContactName = $_POST['agContactName'];
     $dateIssued = date('Y-m-d', strtotime(strip_tags($_POST['datevoucherissued'])));
     $client = $_POST['client'];
     $noadults = $_POST['noadults'];
@@ -437,9 +442,9 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 	$id = $_POST['id'];
 	$redirectmsg = 'Updated';
 
-	$query = $dbh->prepare("UPDATE Voucher SET idAgency = :a, dateVoucherIssued = :dvi, idClient = :c, numberOfAdults = :na, numberOfChildren = :noc, helping = :h, agencyVoucherReference = :avr WHERE id = :id");
+	$query = $dbh->prepare("UPDATE Voucher SET idAgency = :a, dateVoucherIssued = :dvi, idClient = :c, numberOfAdults = :na, numberOfChildren = :noc, helping = :h, agencyVoucherReference = :avr, agencyContactName = :acn WHERE id = :id");
 
-	if($query->execute(array(":a" => $agency, ":dvi" => $dateIssued, ":c" => $client, ":na" => $noadults, ":noc" => $nochildren, ":h" => $helping, ":avr" => $agencyRef, ":id" => $id))) {
+	if($query->execute(array(":a" => $agency, ":dvi" => $dateIssued, ":c" => $client, ":na" => $noadults, ":noc" => $nochildren, ":h" => $helping, ":avr" => $agencyRef, ":acn" => $agContactName, ":id" => $id))) {
 	    $query = $dbh->prepare("DELETE FROM NatureOfNeed WHERE idVoucher = :id");
 
 	    if($query->execute(array(":id" => $id))) {
@@ -470,9 +475,9 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 		$editing = false;
 		$redirectmsg = 'Created';
 
-		$query = $dbh->prepare("INSERT INTO Voucher (idAgency, dateVoucherIssued, idClient, numberOfAdults, numberOfChildren, helping, wasExchanged, agencyVoucherReference) VALUES (:a, :dvi, :c, :na, :noc, :h, false, :avr)");
+		$query = $dbh->prepare("INSERT INTO Voucher (idAgency, dateVoucherIssued, idClient, numberOfAdults, numberOfChildren, helping, wasExchanged, agencyVoucherReference, agencyContactName) VALUES (:a, :dvi, :c, :na, :noc, :h, false, :avr, :acn)");
 
-		if($query->execute(array(":a" => $agency, ":dvi" => $dateIssued, ":c" => $client, ":na" => $noadults, ":noc" => $nochildren, ":h" => $helping, ":avr" => $agencyRef))) {
+		if($query->execute(array(":a" => $agency, ":dvi" => $dateIssued, ":c" => $client, ":na" => $noadults, ":noc" => $nochildren, ":h" => $helping, ":avr" => $agencyRef, ":acn" => $agContactName))) {
 		    $query = $dbh->prepare("SELECT MAX(id) FROM Voucher");
 
 		    if($query->execute()) {
