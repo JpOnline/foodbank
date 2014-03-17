@@ -1,4 +1,5 @@
 <?php
+    date_default_timezone_set('Europe/London');
     ob_start(); // To hide header messages
     
     require_once('header.php');

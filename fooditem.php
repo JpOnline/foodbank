@@ -1,6 +1,7 @@
 <?php
 ob_start(); // To hide header messages
 
+date_default_timezone_set('Europe/London');
 require_once('header.php');
 require_once('log.php');
 
@@ -146,74 +147,80 @@ echo '<option value=\''.$cw['id'].'\'>'.$cw['centralWarehouseName'].'</option>';
 <?PHP
 } else if(isset($_POST['mode']) && $_POST['mode'] == 'update') {
     if(isset($_POST['donation'])) {
-	$warehouse = $_POST['warehouse'];
-	$name = strip_tags($_POST['donationname']);
-	$date = date('Y-m-d', strtotime(strip_tags($_POST['donationdate'])));
-	$total = 0;
-	$donationItems = '';
+		$warehouse = $_POST['warehouse'];
+		$name = strip_tags($_POST['donationname']);
+		$date = date('Y-m-d', strtotime(strip_tags($_POST['donationdate'])));
+		$total = 0;
+		$donationItems = '';
 
-	foreach($_POST['item'] as $id => $quantity) {
-	    if($quantity != '' && intval($quantity) >= 0) {
-		$query = $dbh->prepare("SELECT quantity FROM Store WHERE idWarehouse = " . $warehouse . " AND idFoodItem = " . $id);
-		if($query->execute())
-		    $item = $query->fetch();
-		else
-		    die('Unable to get store information from database');
+		foreach($_POST['item'] as $id => $quantity) {
+		    if($quantity != '') {
+				$query = $dbh->prepare("SELECT quantity FROM Store WHERE idWarehouse = " . $warehouse . " AND idFoodItem = " . $id);
+				if($query->execute())
+				    $item = $query->fetch();
+				else
+				    die('Unable to get store information from database');
 
-		if($query->rowCount() > 0) { // If there is some quantity of this food item in the warehouse
-		    $query = $dbh->prepare("UPDATE Store SET quantity = quantity + " . $quantity . " WHERE idWarehouse = " . $warehouse . " AND idFoodItem = " . $id);
-		    if(intval($quantity) != 0) { // If the new quantity counted in is not 0, update the quantit
-			$total += intval($quantity); // Storing the total donated
-			$donationItems .= $id.'[BRK2]'.$quantity.'[BRK]'; // Storing the items donated for specifying on the donation
-		    }
-		} else { // If there is no quantity of this food already in the warehouse
-		    if(intval($quantity) != 0) { // If the quantity is not 0, insert this item on the database with the new quantity
-			$total += intval($quantity); // Storing the total donated
-			$donationItems .= $id.'[BRK2]'.$quantity.'[BRK]'; // Storing the items donated for specifying on the donation
-			$query = $dbh->prepare("INSERT INTO Store (quantity, idWarehouse, idFoodItem) VALUES (" . $quantity . ", " . $warehouse . ", " . $id . ")");
+				if($query->rowCount() > 0) { // If there is some quantity of this food item in the warehouse
+					if($item['quantity'] + $quantity >= 0){
+					    $query = $dbh->prepare("UPDATE Store SET quantity = quantity + " . $quantity . " WHERE idWarehouse = " . $warehouse . " AND idFoodItem = " . $id);
+					    if(intval($quantity) != 0) { // If the new quantity counted in is not 0, update the quantit
+							$total += intval($quantity); // Storing the total donated
+							$donationItems .= $id.'[BRK2]'.$quantity.'[BRK]'; // Storing the items donated for specifying on the donation
+					    }
+					}else{
+						redirect('fooditem.php', '');
+						die('<h1>Error</h1><br /><h3>You do not have this amount of food to take out.</h3>');
+					}
+				} else { // If there is no quantity of this food already in the warehouse
+				    if(intval($quantity) != 0) { // If the quantity is not 0, insert this item on the database with the new quantity
+						$total += intval($quantity); // Storing the total donated
+						$donationItems .= $id.'[BRK2]'.$quantity.'[BRK]'; // Storing the items donated for specifying on the donation
+						$query = $dbh->prepare("INSERT INTO Store (quantity, idWarehouse, idFoodItem) VALUES (" . $quantity . ", " . $warehouse . ", " . $id . ")");
+				    }
+				}
+				if(!$query->execute()) {
+				    die('<h1>Error</h1><br /><h3>Unable to update store database.</h3>');
+				}
+		    } else if($quantity != '' && (!is_int($quantity) || intval($quantity) < 0)) {
+				die('<h1>Error</h1><br /><h3>Invalid parameters for quantities.</h3>');
 		    }
 		}
-		if(!$query->execute()) {
-		    die('<h1>Error</h1><br /><h3>Unable to update store database.</h3>');
+		if($total > 0) {
+		    $donationItems = substr($donationItems, 0, -5); // Removing the last [BRK]
+
+		    $query = $dbh->prepare("INSERT INTO Donation (name, date, total, items, idWarehouse) VALUES (:n, :d, :t, :it, :idcw)");
+
+		    if(!$query->execute(array(":n" => $name, ":d" => $date, ":t" => $total, ":it" => $donationItems, ":idcw" => $warehouse))) {
+				die('<h1>Error</h1><br /><h3>Unable to update donation database.</h3>');
+		    }
+		    auditlog('Added items: Donation name: ' . $name . ', Date: ' . date('d-m-Y', strtotime(strip_tags($_POST['donationdate']))) . ', Warehouse id: ' . $warehouse);
 		}
-	    } else if($quantity != '' && (!is_int($quantity) || intval($quantity) < 0)) {
-		die('<h1>Error</h1><br /><h3>Invalid parameters for quantities.</h3>');
-	    }
-	}
-	if($total > 0) {
-	    $donationItems = substr($donationItems, 0, -5); // Removing the last [BRK]
+		redirect('fooditem.php', 'Database updated successfully.');
 
-	    $query = $dbh->prepare("INSERT INTO Donation (name, date, total, items, idWarehouse) VALUES (:n, :d, :t, :it, :idcw)");
-
-	    if(!$query->execute(array(":n" => $name, ":d" => $date, ":t" => $total, ":it" => $donationItems, ":idcw" => $warehouse))) {
-		die('<h1>Error</h1><br /><h3>Unable to update donation database.</h3>');
-	    }
-	    auditlog('Added items: Donation name: ' . $name . ', Date: ' . date('d-m-Y', strtotime(strip_tags($_POST['donationdate']))) . ', Warehouse id: ' . $warehouse);
-	}
-	redirect('fooditem.php', 'Database updated successfully.');
     } else if(isset($_POST['stock'])) {
 	$warehouse = $_POST['warehouse'];
 
 	foreach($_POST['item'] as $id => $quantity) {
 	    if(intval($quantity) >= 0 || $quantity == '') {
-		$query = $dbh->prepare("SELECT quantity FROM Store WHERE idWarehouse = " . $warehouse . " AND idFoodItem = " . $id);
-		if($query->execute())
-		    $rows = $query->fetch();
-		else
-		    die('Unable to get food item information from database');
+			$query = $dbh->prepare("SELECT quantity FROM Store WHERE idWarehouse = " . $warehouse . " AND idFoodItem = " . $id);
+			if($query->execute())
+			    $rows = $query->fetch();
+			else
+			    die('Unable to get food item information from database');
 
-		if($query->rowCount() > 0) {
-		    if($quantity != '')
-			$query = $dbh->prepare("UPDATE Store SET quantity = " . $quantity . " WHERE idWarehouse = " . $warehouse . " AND idFoodItem = " . $id);
-		    else
-			$query = $dbh->prepare("DELETE FROM Store WHERE idWarehouse = " . $warehouse . " AND idFoodItem = " . $id);
-		} else {
-		    if($quantity != '' && $quantity != 0)
-			$query = $dbh->prepare("INSERT INTO Store (quantity, idWarehouse, idFoodItem) VALUES (" . $quantity . ", " . $warehouse . ", " . $id . ")");
-		}
-		if(!$query->execute()) {
-		    die('Unable to update store database.');
-		}
+			if($query->rowCount() > 0) {
+			    if($quantity != '')
+				$query = $dbh->prepare("UPDATE Store SET quantity = " . $quantity . " WHERE idWarehouse = " . $warehouse . " AND idFoodItem = " . $id);
+			    else
+				$query = $dbh->prepare("DELETE FROM Store WHERE idWarehouse = " . $warehouse . " AND idFoodItem = " . $id);
+			} else {
+			    if($quantity != '' && $quantity != 0)
+				$query = $dbh->prepare("INSERT INTO Store (quantity, idWarehouse, idFoodItem) VALUES (" . $quantity . ", " . $warehouse . ", " . $id . ")");
+			}
+			if(!$query->execute()) {
+			    die('Unable to update store database.');
+			}
 	    } else if($quantity != '' && (!is_int($quantity) || intval($quantity) < 0)) {
 		die('<h1>Error</h1><br /><h3>Invalid parameters for quantities.</h3>');
 	    }
