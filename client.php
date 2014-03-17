@@ -90,7 +90,7 @@
             </tr>
 			<tr>
 				<td><h3>Postcode *</h3></td>
-				<td><input type='text' value='' name='postcode' id='postcode' maxlength='10'></td>
+				<td><input type='text' value='' name='postcode' id='postcode' maxlength='10' autocapitalize='characters' ></td>
 			</tr>
 		</table><br /><h5>* Mandatory fields</h5><br /><br /></div>
         <div>
@@ -204,7 +204,7 @@
 			</tr>
 			<tr>
 				<td><h3>Postcode *</h3></td>
-                <td><input type='text' value='<?PHP echo $row['postcode']; ?>' name='postcode' id='<?PHP if($nofix) echo 'opt';?>postcode' <?PHP if($nofix) echo 'disabled';?> maxlength='10' <?PHP echo $readonly;?>></td>
+                <td><input type='text' value='<?PHP echo $row['postcode']; ?>' name='postcode' id='<?PHP if($nofix) echo 'opt';?>postcode' <?PHP if($nofix) echo 'disabled';?> maxlength='10' autocapitalize='characters' <?PHP echo $readonly;?>></td>
 			</tr>
             <tr>
 				<td><br /><h5>* Mandatory fields</h5><br /></td>

@@ -96,7 +96,7 @@
         	</tr>
 			<tr>
 				<td><h3>Postcode *</h3></td>
-                <td><input type='text' value='<?PHP if($editing) echo $row['postcode']; ?>' name='postcode' size='30' maxlength='10' <?PHP echo $readonly; ?>></td>
+                <td><input type='text' value='<?PHP if($editing) echo $row['postcode']; ?>' name='postcode' size='30' maxlength='10' autocapitalize='characters' <?PHP echo $readonly; ?>></td>
 			</tr>
         </table></div>
         <div>
@@ -218,7 +218,7 @@
 			</tr>
             <tr>
 				<td><h3>Postcode *</h3></td>
-				<td><input type='text' value='<?PHP if($editing) echo $row['postcode']; ?>' name='postcode' size='30' maxlength='10' <?PHP echo $readonly; ?>></td>
+				<td><input type='text' value='<?PHP if($editing) echo $row['postcode']; ?>' name='postcode' size='30' maxlength='10' autocapitalize='characters'  <?PHP echo $readonly; ?>></td>
 			</tr>
 			</table></div>
         <div>
@@ -337,7 +337,7 @@
                 </tr>
                 <tr>
 					<td><h3>Postcode *</h3></td>
-					<td><input type='text' value='<?PHP if($editing) echo $row['postcode']; ?>' name='postcode' size='30' maxlength='10' <?PHP echo $readonly; ?>></td>
+					<td><input type='text' value='<?PHP if($editing) echo $row['postcode']; ?>' name='postcode' size='30' maxlength='10' autocapitalize='characters' <?PHP echo $readonly; ?>></td>
 				</tr>
             </table></div>
 			<div>
