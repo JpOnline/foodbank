@@ -71,8 +71,8 @@
                 <td><input type='text' value='<?PHP if($editing) echo $row['areaOfAssistance']; ?>' name='areaOfAssistance' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
             </tr>
             <tr>
-                <td><h3>Web Adress *</h3></td>
-                <td><input type='text' value='<?PHP if($editing) echo $row['webAddress']; ?>' name='webAddress' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
+                <td><h3>Web Adress</h3></td>
+                <td><input type='text' value='<?PHP if($editing) echo $row['webAddress']; ?>' name='webAddress' size='30' maxlength='50' <?PHP echo $readonly; ?>></td>
             </tr>
         	<tr>
         		<td><h3>Home telephone number</h3></td>
