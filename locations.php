@@ -67,7 +67,7 @@
                 <td><input type='text' value='<?PHP if($editing) echo $row['referralCentreReference']; ?>' name='rcr' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
             </tr>
             <tr>
-                <td><h3>Area of Assitance *</h3></td>
+                <td><h3>Area of Assistance *</h3></td>
                 <td><input type='text' value='<?PHP if($editing) echo $row['areaOfAssistance']; ?>' name='areaOfAssistance' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
             </tr>
             <tr>
