@@ -96,7 +96,7 @@ for($j = 0; $j < $ficount; $j++) {
 	    } else {
 		$value = '';
 	    }
-	    echo '<td><h3><input type=\'text\' size=\'10\' name=\'item['. $rowFI[$j]['id'] .']\' value=\'' . $value . '\' maxlength=\'5\'></h3></td>';
+	    echo '<td><h3><input type=\'number\' size=\'10\' name=\'item['. $rowFI[$j]['id'] .']\' value=\'' . $value . '\' maxlength=\'5\'></h3></td>';
 	    echo '</tr>';
 	}
 ?>
