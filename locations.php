@@ -72,7 +72,7 @@
             </tr>
             <tr>
                 <td><h3>Web Address</h3></td>
-                <td><input type='text' value='<?PHP if($editing) echo $row['webAddress']; ?>' name='webAddress' size='30' maxlength='2000' <?PHP echo $readonly; ?>></td>
+                <td><input type='text' value='<?PHP if($editing) echo $row['webAddress']; ?>' name='webAddress' id='opt' size='30' maxlength='2000' <?PHP echo $readonly; ?>></td>
             </tr>
         	<tr>
         		<td><h3>Home telephone number</h3></td>
