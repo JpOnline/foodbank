@@ -661,7 +661,7 @@
         }
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'brieflistofclients') {
         $dbh = connect();
-        $query = $dbh->prepare("SELECT * FROM Client ORDER BY familyName");
+        $query = $dbh->prepare("SELECT * FROM Client WHERE deleted = 0 ORDER BY familyName");
         
         auditlog('Viewed reports: Brief list of clients.');
         
@@ -786,7 +786,7 @@
         }
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'fulllistofclients') {
         $dbh = connect();
-        $query = $dbh->prepare("SELECT * FROM Client");
+        $query = $dbh->prepare("SELECT * FROM Client WHERE deleted = 0 ORDER BY familyName");
         
         auditlog('Viewed reports: Full list of clients.');
         
