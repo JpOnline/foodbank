@@ -1,5 +1,6 @@
 <?php
     ob_start(); // To hide header messages
+
     
     if(isset($_GET['mode']) && ($_GET['mode'] != 'listofagencies' && $_GET['mode'] != 'brieflistofclients' && $_GET['mode'] != 'fulllistofclients') || !isset($_GET['mode'])) require_once('header.php');
     require_once('log.php');
@@ -637,7 +638,7 @@
 	    echo '<div><form action=\'reports.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>';
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'listofagencies') {
         $dbh = connect();
-        $query = $dbh->prepare("SELECT * FROM Agency");
+        $query = $dbh->prepare("SELECT * FROM Agency WHERE deleted = 0 ORDER BY organisation");
         
         auditlog('Viewed reports: List of Agencies.');
         
