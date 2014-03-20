@@ -60,19 +60,19 @@
         <div><table style="width: 100%">
         	<tr>
         		<td><h3>Organisation *</h3></td>
-				<td><input type='text' value='<?PHP if($editing) echo $row['organisation']; ?>' name='organisation' size='30' maxlength='32' <?PHP echo $readonly; ?>></td>
+				<td><input type='text' value='<?PHP if($editing) echo $row['organisation']; ?>' name='organisation' size='30' maxlength='200' <?PHP echo $readonly; ?>></td>
         	</tr>
         	<tr>
                 <td><h3>Referral centre reference *</h3></td>
                 <td><input type='text' value='<?PHP if($editing) echo $row['referralCentreReference']; ?>' name='rcr' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
             </tr>
             <tr>
-                <td><h3>Area of Assitance *</h3></td>
-                <td><input type='text' value='<?PHP if($editing) echo $row['areaOfAssistance']; ?>' name='areaOfAssistance' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
+                <td><h3>Area of Assistance *</h3></td>
+                <td><input type='text' value='<?PHP if($editing) echo $row['areaOfAssistance']; ?>' name='areaOfAssistance' size='30' maxlength='100' <?PHP echo $readonly; ?>></td>
             </tr>
             <tr>
-                <td><h3>Web Adress</h3></td>
-                <td><input type='text' value='<?PHP if($editing) echo $row['webAddress']; ?>' name='webAddress' size='30' maxlength='50' <?PHP echo $readonly; ?>></td>
+                <td><h3>Web Address</h3></td>
+                <td><input type='text' value='<?PHP if($editing) echo $row['webAddress']; ?>' name='webAddress' size='30' maxlength='2000' <?PHP echo $readonly; ?>></td>
             </tr>
         	<tr>
         		<td><h3>Home telephone number</h3></td>
@@ -84,7 +84,7 @@
 			</tr>
         	<tr>
         		<td><h3>Address 1 *</h3></td>
-        		<td><input type='text' value='<?PHP if($editing) echo $row['address1']; ?>' name='address1' size='30' maxlength='32' <?PHP echo $readonly; ?>></td>
+        		<td><input type='text' value='<?PHP if($editing) echo $row['address1']; ?>' name='address1' size='30' maxlength='100' <?PHP echo $readonly; ?>></td>
             </tr>
         	<tr>
         		<td><h3>Address 2</h3></td>
@@ -206,7 +206,7 @@
 			</tr>
 			<tr>
 				<td><h3>Address 1 *</h3></td>
-				<td><input type='text' value='<?PHP if($editing) echo $row['address1']; ?>' name='address1' size='30' maxlength='32' <?PHP echo $readonly; ?>></td>
+				<td><input type='text' value='<?PHP if($editing) echo $row['address1']; ?>' name='address1' size='30' maxlength='100' <?PHP echo $readonly; ?>></td>
 			</tr>
 			<tr>
 				<td><h3>Address 2</h3></td>
@@ -325,7 +325,7 @@
 				</tr>
 				<tr>
 					<td><h3>Address 1 *</h3></td>
-					<td><input type='text' value='<?PHP if($editing) echo $row['address1']; ?>' name='address1' size='30' maxlength='32' <?PHP echo $readonly; ?>></td>
+					<td><input type='text' value='<?PHP if($editing) echo $row['address1']; ?>' name='address1' size='30' maxlength='100' <?PHP echo $readonly; ?>></td>
                 </tr>
 				<tr>
 					<td><h3>Address 2</h3></td>
