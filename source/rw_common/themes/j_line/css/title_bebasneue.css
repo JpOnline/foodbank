@@ -1,0 +1,31 @@
+#siteTitle, footer, h1, h2, h3, h4, h5, h6,
+.blog-entry-title a, 
+.Title2,
+.blog-entry-date,
+.blog-archive-month,
+.blog-entry-title a:hover, 
+.album-title, 
+.movie-page-title{
+-webkit-font-smoothing: antialiased;
+font-family: 'BebasNeueRegular';
+font-weight: normal;
+}
+
+.blog-entry-title,
+.blog-archive-month {
+font-size: 37px;
+line-height: 34px;
+padding-bottom: 10px;
+}
+
+#siteTitle div{
+line-height: 100%;
+}
+
+#siteTitle{
+padding-bottom: 20px;
+}
+footer{
+font-size: 1.8em;
+font-weight: 100;
+}

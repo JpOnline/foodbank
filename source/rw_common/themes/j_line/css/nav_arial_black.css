@@ -1,0 +1,31 @@
+@font-face {
+	font-family: 'ArialBlackRegular';
+	src: url('../font/arial-black-webfont.eot');
+	src: url('../font/arial-black-webfont.eot?#iefix') format('embedded-opentype'),
+		 url('../font/arial-black-webfont.woff') format('woff'),
+		 url('../font/arial-black-webfont.ttf') format('truetype'),
+		 url('../font/arial-black-webfont.svg#ArialBlackRegular') format('svg');
+	font-weight: normal;
+	font-style: normal;		
+}
+
+nav>ul {
+font-family: 'ArialBlackRegular';
+text-transform: uppercase;
+letter-spacing: -3px;
+}
+
+nav ul ul{
+font-size: 17px;
+text-transform: uppercase;
+}
+
+nav ul ul>li>a{
+padding: 5px 6px 6px;
+}
+
+nav>ul>li>a,
+nav>ul>li>a:hover,
+nav>ul>li>a.current{
+padding: 5px 9px 4px 5px;
+}
