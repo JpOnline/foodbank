@@ -47,7 +47,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
     } else {
 		die('<h1>Unable to get client information from database.</h1><div><form action=\'voucher.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
     }
-    $query = $dbh->prepare("SELECT name, id FROM FoodParcelType WHERE edited = 0 ORDER BY name");
+    $query = $dbh->prepare("SELECT name, id, startingLetter FROM FoodParcelType WHERE edited = 0 ORDER BY startingLetter");
     if($query->execute()) {
 		$FPTCount = $query->rowCount();
 		$FPTRows = $query->fetchAll();
@@ -65,19 +65,17 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 
 				$query = $dbh->prepare("SELECT * FROM NatureOfNeed WHERE idVoucher = :id ORDER BY nature ASC");
 				if($query->execute(array(":id" => $id))) {
-				    if($query->rowCount() > 0) {
 						$natureRows = $query->fetchAll();
 						$natureCount = $query->rowCount();
 
 						if($voucherRow['wasExchanged'] == '1' && $query->rowCount() > 0) {
-						    $query = $dbh->prepare("SELECT E.pointOfIssue, E.pointOfIssueType, E.date, E.idVoucher, FP.referenceNumber, FP.id as idFoodParcel FROM Exchange E, FoodParcel FP WHERE E.idVoucher = :id AND FP.idVoucher = E.idVoucher ORDER BY FP.referenceNumber DESC");
+						    $query = $dbh->prepare("SELECT DISTINCT E.pointOfIssue, E.pointOfIssueType, E.date, E.idVoucher, FP.referenceNumber, FP.id as idFoodParcel FROM Exchange E, FoodParcel FP WHERE E.idVoucher = :id AND FP.idVoucher = E.idVoucher ORDER BY FP.referenceNumber");
 
 					    	if($query->execute(array(":id" => $id))) {
 								if($query->rowCount() > 0) {
 								    $exchanged = true;
 								    $exchangeRows = $query->fetchAll();
 								    $exchangeCount = $query->rowCount();
-
 								    if($exchangeRows[0]['pointOfIssueType'] == 'agency') {
 										$query = $dbh->prepare("SELECT id, deleted, organisation as name FROM Agency ORDER BY name");
 										if($query->execute()) {
@@ -109,9 +107,6 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 							die('<h1>Invalid ID.</h1><div><form action=\'voucher.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
 						    }
 						}
-				    } else {
-					die('<h1>Unable to get nature of need information from database.</h1><div><form action=\'voucher.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
-				    }
 				}
 		    } else {
 			die('<h1>Invalid ID.</h1><div><form action=\'voucher.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
@@ -168,7 +163,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 					</td>
 				    </tr>
 					<tr>
-					    <td><h3>Agency Voucher Reference (optional)</h3></td>
+					    <td style="line-height:130%"><h3>Agency Voucher Reference (optional)</h3></td>
 					    <td><input type='text' name='agvoucherref' value='<?PHP if($editing) echo $voucherRow['agencyVoucherReference']; ?>' maxlength='20' id='opt' <?PHP echo $readonly; ?>></td>
 					</tr>
 					<tr>
@@ -227,12 +222,12 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 				    </tr>
 				    <tr><td colspan='2'>&nbsp;</td></tr>
 				    <tr>
-					<td><h3>How is the Agency helping the client?</h3></td>
+					<td style="line-height:130%"><h3>How is the Agency helping the client?</h3></td>
 					<td><textarea name='helping' id='helping' value='1' rows='5' style='resize:none; width:100%;' <?PHP echo $readonly; ?>><?PHP if($editing) echo $voucherRow['helping']; ?></textarea></td>
 				    </tr>
 				    <tr><td colspan='2'>&nbsp;</td></tr>
 				    <tr>
-					<td><h3>Nature of Need</h3><?PHP if($readonly == '') { ?><br /><h5>If other, please specify.<br /><br />You can choose more than one.</h5><?PHP } ?></td>
+					<td style="line-height:110%"><h3>Nature of Need</h3><?PHP if($readonly == '') { ?><br /><h5>If other, please specify.<br /><br />You can choose more than one.</h5><?PHP } ?></td>
 					<td>
 					    <?PHP
 						$nonValue = array('asylum', 'benefitschanged', 'benefitsstopped', 'childholidaymeals', 'crisisloanrefused', 'debt', 'familycrisis', 'sickness', 'sofasurfing', 'streethomeless', 'unemployed', 'waitingforbenefittostart', 'zother');
@@ -337,11 +332,11 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 
  <!-- new part -->
 				    <br><br>
-				    <td><h3>Parcels to be given out </h3><br /><h5>Ctrl+click to select more than one.</h5><br /></td>
+				    <td><h3>Parcels to be given out</h3><br /><h5>Ctrl+click to select more than one.</h5><br /></td>
 				    <?php
-
+				    $j = 0;
 				    for($k=0; $k< $FPTCount; $k++){
-					$query = $dbh->prepare("SELECT referenceNumber, FoodParcel.id, wasGiven, name FROM FoodParcel, FoodParcelType WHERE idFPType = FoodParcelType.id AND name = :n ORDER BY referenceNumber DESC");
+					$query = $dbh->prepare("SELECT referenceNumber, FoodParcel.id, wasGiven, name FROM FoodParcel, FoodParcelType WHERE idFPType = FoodParcelType.id AND name = :n ORDER BY referenceNumber");
 					if($query->execute(array(":n" => $FPTRows[$k]['name']))) {
 					    $fpCount = $query->rowCount();
 					    $fpRows = $query->fetchAll();
@@ -366,20 +361,25 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 					    <td><?PHP if($readonly == '') { ?>
 						<select id='foodparcels' name='foodparcels[]' style='width:100%;' multiple='multiple' >
 					    <?PHP } ?>
-					    <?PHP for($i = 0, $j = 0; $i < $fpCount; $i++) {
-						if($fpRows[$i]['wasGiven'] == '0' || $exchanged && $fpRows[$i]['id'] == $exchangeRows[$j]['idFoodParcel']) {
-						    if($exchanged && $fpRows[$i]['id'] == $exchangeRows[$j]['idFoodParcel']) {
-							$selected = 'selected=\'selected\'';
-							if($j < $exchangeCount-1) $j++;
-						    } else {
-							$selected = '';
-						    } 
-						    if($readonly == '' || ($readonly != '' && $selected != '')) { ?>
-							<option value='<?PHP echo $fpRows[$i]['id'] ?>' <?PHP echo $selected; ?> > <?PHP echo $fpRows[$i]['referenceNumber'] . ' - ' . $fpRows[$i]['name']; ?></option>
-							<?PHP if($readonly != '') { ?>
-							    <input type='hidden' name='foodparcels[]" ?>' value='<?PHP echo $fpRows[$i]['id'] ?>'>
-							<?PHP } 
-						    }
+
+					    <?PHP
+
+					     for($i = 0; $i < $fpCount; $i++) {
+					     	
+							if($fpRows[$i]['wasGiven'] == '0' || ($exchanged && $fpRows[$i]['id'] == $exchangeRows[$j]['idFoodParcel'])) {
+								
+							    if($exchanged && $fpRows[$i]['id'] == $exchangeRows[$j]['idFoodParcel']) {
+									$selected = 'selected=\'selected\'';
+									if($j < $exchangeCount-1) $j++;
+							    } else {
+									$selected = '';
+							    } 
+							    if($readonly == '' || ($readonly != '' && $selected != '')) { ?>
+									<option value='<?PHP echo $fpRows[$i]['id'] ?>' <?PHP echo $selected; ?> > <?PHP echo $fpRows[$i]['referenceNumber'] . ' - ' . $fpRows[$i]['name']; ?></option>
+									<?PHP if($readonly != '') { ?>
+									    <input type='hidden' name='foodparcels[]" ?>' value='<?PHP echo $fpRows[$i]['id'] ?>'>
+									<?PHP } 
+							    }
 						    }
 						}
 					    if($readonly == '') { ?>
@@ -570,7 +570,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 }else if(isset($_GET['mode']) && $_GET['mode'] == 'viewallexchanged') {
     $dbh = connect();
 
-    $query = $dbh->prepare("SELECT E.date, E.pointOfIssueType, E.pointOfIssue, E.idVoucher, C.forename, C.familyName FROM Exchange E, Voucher V, Client C WHERE E.idVoucher = V.id AND V.idClient = C.id ORDER BY E.date DESC, V.id DESC");
+    $query = $dbh->prepare("SELECT DISTINCT E.date, E.pointOfIssueType, E.pointOfIssue, E.idVoucher, C.forename, C.familyName FROM Exchange E, Voucher V, Client C WHERE E.idVoucher = V.id AND V.idClient = C.id ORDER BY E.date DESC, V.id DESC");
 
     if($query->execute()) {
 	$voucherExRows = $query->fetchAll();
@@ -670,7 +670,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 } else {
     $dbh = connect();
 
-    $query = $dbh->prepare("SELECT E.date, E.pointOfIssueType, E.pointOfIssue, E.idVoucher, C.forename, C.familyName FROM Exchange E, Voucher V, Client C WHERE E.idVoucher = V.id AND V.idClient = C.id ORDER BY E.date DESC, V.id DESC LIMIT 0,5");
+    $query = $dbh->prepare("SELECT DISTINCT E.date, E.pointOfIssueType, E.pointOfIssue, E.idVoucher, C.forename, C.familyName FROM Exchange E, Voucher V, Client C WHERE E.idVoucher = V.id AND V.idClient = C.id ORDER BY E.date DESC, V.id DESC LIMIT 0,5");
 
     if($query->execute()) {
 		$voucherExRows = $query->fetchAll();

@@ -225,7 +225,7 @@
 				<form><input class="form-input-button" type='submit' value='Back'></form>
 	        </div><br /><hr><br />
 			<?PHP
-				$query = $dbh->prepare("SELECT E.idVoucher, E.date, E.pointOfIssueType, E.pointOfIssue, V.dateVoucherIssued FROM Voucher V, Exchange E WHERE E.idVoucher = V.id AND V.idClient = :id");
+				$query = $dbh->prepare("SELECT DISTINCT E.idVoucher, E.date, E.pointOfIssueType, E.pointOfIssue, V.dateVoucherIssued FROM Voucher V, Exchange E WHERE E.idVoucher = V.id AND V.idClient = :id");
                 
                 if($query->execute(array(":id" => $_GET['id']))) {
                     if($query->rowCount() > 0) {

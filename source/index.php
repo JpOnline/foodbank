@@ -1,5 +1,4 @@
 <?php
-    date_default_timezone_set('Europe/London');
     ob_start(); // To hide header messages
     
     require_once('header.php');
@@ -24,7 +23,7 @@
         die('Unable to get food parcel information from database.');
     }
     
-    $query = $dbh->prepare("SELECT COUNT(*) AS exchanged FROM FoodParcel FP, Exchange E WHERE FP.wasGiven = true AND E.idVoucher = FP.idVoucher AND E.date >= :d");
+    $query = $dbh->prepare("SELECT COUNT(*) AS exchanged FROM Exchange E WHERE E.date >= :d");
     $date = date('Y-m-d', strtotime('-1 year'));
     
     if($query->execute(array(":d" => $date))) {

@@ -1,6 +1,8 @@
 <?php
  
-    //Database non official, once the official one contain confidential data.
+   //In the fake database is possible to log in the system with the user jpd21 and the password asdfjkl;
+
+   //Database non official, once the official one contain confidential data.
     define('DB_USERNAME', 'zigoavalia');
     define('DB_PASSWORD', 'zigavl@@9$');
     define('DB_HOST', 'aguamarinha.com.br');

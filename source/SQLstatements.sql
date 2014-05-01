@@ -1,6 +1,7 @@
 -- These are the statements to build all the sql tables used in the Food Bank site without
 -- any data, because the real data used is confidential and have personal information about
 -- real people.
+-- In the fake database is possible to log in the system with the user jpd21 and the password asdfjkl;
 
 -- phpMyAdmin SQL Dump
 -- version 4.0.6deb1

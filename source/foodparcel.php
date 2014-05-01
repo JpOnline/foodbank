@@ -584,7 +584,7 @@
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'viewallgiven') {
         $dbh = connect();
         
-        $query = $dbh->prepare("SELECT FP.referenceNumber, FP.packingDate, FP.expiryDate, FP.idVoucher, E.date FROM Exchange E, FoodParcel FP WHERE E.idVoucher = FP.idVoucher ORDER BY date DESC");
+        $query = $dbh->prepare("SELECT DISTINCT FP.referenceNumber, FP.packingDate, FP.expiryDate, FP.idVoucher, E.date FROM Exchange E, FoodParcel FP WHERE E.idVoucher = FP.idVoucher ORDER BY date DESC");
         
         if($query->execute()) {
             $givenCount = $query->rowCount();

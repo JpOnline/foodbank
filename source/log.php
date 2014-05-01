@@ -1,6 +1,4 @@
 <?php
-//This file is responsible for put in the database a log describing every action of every user.
-
     function auditlog($action) {
         if(!isset($_SESSION)) { // Starting session
             session_start();
