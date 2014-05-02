@@ -186,16 +186,16 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 							$selected = 'selected';
 							$br = '&#13;&#10;';
 							$voucherRow['clientAddr'] =  $clientRows[$i]['address1'].$br. $clientRows[$i]['address2'].$br. $clientRows[$i]['town'].$br. $clientRows[$i]['postcode'];
-							$clientName = $clientRows[$i]['forename'] . ' ' . $clientRows[$i]['familyName'];
+							$clientName = $clientRows[$i]['familyName'] . ', ' . $clientRows[$i]['forename'];
 						    } else {
 							$selected = '';
 						    }
 						    if($readonly == '') {
 						    	if($editing){?>
-									<option value='<?PHP echo $clientRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $clientRows[$i]['forename'].' '.$clientRows[$i]['familyName']; ?></option>			
+									<option value='<?PHP echo $clientRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $clientRows[$i]['familyName'] . ', ' . $clientRows[$i]['forename']; ?></option>			
 								<?PHP }else{
 									if($clientRows[$i]['deleted'] != 1){?>
-										<option value='<?PHP echo $clientRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $clientRows[$i]['forename'].' '.$clientRows[$i]['familyName']; ?></option>
+										<option value='<?PHP echo $clientRows[$i]['id']; ?>' <?PHP echo $selected; ?>><?PHP echo $clientRows[$i]['familyName'] . ', ' . $clientRows[$i]['forename']; ?></option>
 								    <?PHP }
 								}
 							}
