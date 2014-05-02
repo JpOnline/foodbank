@@ -201,7 +201,10 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 							}
 						}
 						if($readonly == '') { ?>
-							</select>&nbsp;&nbsp;&nbsp;<a  href='client.php?mode=add'>new Client</a></h5>
+							</select>&nbsp;&nbsp;&nbsp; 
+							<form method="GET" action="client.php?mode=add">
+							    <input class="form-input-button" type="submit" value="New Client">
+							</form>
 						<?PHP } else { ?>
 						    <input type='hidden' name='client' value='<?PHP echo $voucherRow['idClient']; ?>'><h5><?PHP echo $clientName; ?></h5>
 						<?PHP } ?>
