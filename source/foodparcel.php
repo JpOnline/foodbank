@@ -510,8 +510,15 @@
         redirect('foodparcel.php?mode=packnew', '<h3>Food Parcel Type created successfully.</h3>');
         auditlog('Created new food parcel type. Name: ' . $name);
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'viewallpacked') {
+
+	//Responsible for the reordering function of the columns
+	$order = (isset($_GET['orderby'])) ? $_GET['orderby'] : 'id Desc' ;
+	//Cut the first word from the orderImg variable, we stay with the DESC or ASC part with a space
+	$orderImg = strchr($order, ' ');
+	$orderImg = '<img style="vertical-align:middle" src=\'rw_common/images/navArrow' . substr($orderImg,1) . '.jpeg\' style=\'border:0;\'>';
+
         $dbh = connect();
-        $query = $dbh->prepare("SELECT id, referenceNumber, packingDate, expiryDate, idAgency, idDP, idWarehouse FROM FoodParcel WHERE wasGiven = 0 ORDER BY id DESC");
+        $query = $dbh->prepare("SELECT id, referenceNumber, packingDate, expiryDate, idAgency, idDP, idWarehouse FROM FoodParcel WHERE wasGiven = 0 ORDER BY " . $order);
         
         if($query->execute()) {
             $packedCount = $query->rowCount();
@@ -563,9 +570,30 @@
         <div><h3>Parcels packed</h3></div><br />
         <div><table style="width: 100%; text-align:center;">
         	<thead>
-        		<td><h3>Parcel no.</h3></td>
-        		<td><h3>Packing date</h3></td>
-        		<td><h3>Expiry date</h3></td>
+			<td> 
+			    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
+			    <a href='foodparcel.php?mode=viewallpacked&orderby=<?PHP if($order=='referenceNumber Asc') echo 'referenceNumber Desc'; else echo 'referenceNumber Asc';?>'>
+				<h3>Parcel no. 
+				<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+				<?PHP if(strchr($order, ' ', true)=='referenceNumber') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td> 
+			    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
+			    <a href='foodparcel.php?mode=viewallpacked&orderby=<?PHP if($order=='packingDate Asc') echo 'packingDate Desc'; else echo 'packingDate Asc';?>'>
+				<h3>Packing date 
+				<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+				<?PHP if(strchr($order, ' ', true)=='packingDate') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td> 
+			    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
+			    <a href='foodparcel.php?mode=viewallpacked&orderby=<?PHP if($order=='expiryDate Asc') echo 'expiryDate Desc'; else echo 'expiryDate Asc';?>'>
+				<h3>Expiry date 
+				<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+				<?PHP if(strchr($order, ' ', true)=='expiryDate') echo $orderImg;?></h3>
+			    </a>
+			</td>
         		<td><h3>Location</h3></td>
         		<td>&nbsp;</td>
         	</thead>
@@ -619,7 +647,13 @@
     } else {
         $dbh = connect();
         
-        $query = $dbh->prepare("SELECT FP.referenceNumber, FP.packingDate, FP.expiryDate, FP.idVoucher, E.date FROM Exchange E, FoodParcel FP WHERE E.idVoucher = FP.idVoucher ORDER BY date DESC LIMIT 0, 5");
+	//Responsible for the reordering function of the columns
+	$order = (isset($_GET['orderby'])) ? $_GET['orderby'] : 'date Desc' ;
+	//Cut the first word from the orderImg variable, we stay with the DESC or ASC part with a space
+	$orderImg = strchr($order, ' ');
+	$orderImg = '<img style="vertical-align:middle" src=\'rw_common/images/navArrow' . substr($orderImg,1) . '.jpeg\' style=\'border:0;\'>';
+
+        $query = $dbh->prepare("SELECT FP.referenceNumber, FP.packingDate, FP.expiryDate, FP.idVoucher, E.date FROM Exchange E, FoodParcel FP WHERE E.idVoucher = FP.idVoucher ORDER BY ". $order ." LIMIT 0, 5");
         
         if($query->execute()) {
             $givenCount = $query->rowCount();
@@ -628,7 +662,13 @@
             die('Unable to get given parcels from database.');
         }
         
-        $query = $dbh->prepare("SELECT id, referenceNumber, packingDate, expiryDate, idAgency, idDP, idWarehouse FROM FoodParcel WHERE wasGiven = 0 ORDER BY id DESC LIMIT 0, 5");
+	//Responsible for the reordering function of the columns
+	$order = (isset($_GET['orderby'])) ? $_GET['orderby'] : 'id Desc' ;
+	//Cut the first word from the orderImg variable, we stay with the DESC or ASC part with a space
+	$orderImg = strchr($order, ' ');
+	$orderImg = '<img style="vertical-align:middle" src=\'rw_common/images/navArrow' . substr($orderImg,1) . '.jpeg\' style=\'border:0;\'>';
+
+        $query = $dbh->prepare("SELECT id, referenceNumber, packingDate, expiryDate, idAgency, idDP, idWarehouse FROM FoodParcel WHERE wasGiven = 0 ORDER BY ". $order ." LIMIT 0, 5");
         
         if($query->execute()) {
             $packedCount = $query->rowCount();
@@ -689,9 +729,30 @@
         <div><h3>Parcels packed</h3></div><br />
         <div><table style="width: 100%; text-align:center;">
         	<thead>
-        		<td><h3>Parcel no.</h3></td>
-        		<td><h3>Packing date</h3></td>
-        		<td><h3>Expiry date</h3></td>
+			<td> 
+			    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
+			    <a href='foodparcel.php?orderby=<?PHP if($order=='referenceNumber Asc') echo 'referenceNumber Desc'; else echo 'referenceNumber Asc';?>'>
+				<h3>Parcel no. 
+				<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+				<?PHP if(strchr($order, ' ', true)=='referenceNumber') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td> 
+			    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
+			    <a href='foodparcel.php?orderby=<?PHP if($order=='packingDate Asc') echo 'packingDate Desc'; else echo 'packingDate Asc';?>'>
+				<h3>Packing date 
+				<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+				<?PHP if(strchr($order, ' ', true)=='packingDate') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td> 
+			    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
+			    <a href='foodparcel.php?orderby=<?PHP if($order=='expiryDate Asc') echo 'expiryDate Desc'; else echo 'expiryDate Asc';?>'>
+				<h3>Expiry date 
+				<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+				<?PHP if(strchr($order, ' ', true)=='expiryDate') echo $orderImg;?></h3>
+			    </a>
+			</td>
         		<td><h3>Location</h3></td>
         		<td>&nbsp;</td>
         	</thead>

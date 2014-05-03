@@ -433,8 +433,13 @@
             die('<h1>Error</h1><br /><h3>Unable to update client database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
         }
     } else {
+	//Responsible for the reordering function of the columns
+	$order = (isset($_GET['orderby'])) ? $_GET['orderby'] : 'familyName Asc' ;
+	//Cut the first word from the orderImg variable, we stay with the DESC or ASC part with a space
+	$orderImg = strchr($order, ' ');
+	$orderImg = '<img style="vertical-align:middle" src=\'rw_common/images/navArrow' . substr($orderImg,1) . '.jpeg\' style=\'border:0;\'>';
         $dbh = connect();
-        $query = $dbh->prepare("SELECT id, familyName, forename, postcode FROM Client WHERE deleted = 0 ORDER BY familyName ASC");
+        $query = $dbh->prepare("SELECT id, familyName, forename, postcode FROM Client WHERE deleted = 0 ORDER BY " . $order);
         
         if($query->execute()) {
             $clientRows = $query->fetchAll();
@@ -459,13 +464,32 @@
         </form>
 		</div>
 	<?PHP } ?>
+
 		<div style="height:300px;overflow:auto;"><br />
         	<span id="txtResult"></span><span id="allclients">
 			<table style='width: 100%;'>
 		        <thead>
-					<td><h3>Last Name</h3></td>
-					<td><h3>First Name</h3></td>
-					<td><h3>Postcode</h3></td>
+					<td> 
+					    <a href='client.php?orderby=<?PHP if($order=='familyName Asc') echo 'familyName Desc'; else echo 'familyName Asc';?>'>
+						<h3>Last Name <?PHP if(strchr($order, ' ', true) == 'familyName') echo $orderImg;?></h3> 
+					    </a>
+					</td>
+					<td>
+					    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
+					    <a href='client.php?orderby=<?PHP if($order=='forename Asc') echo 'forename Desc'; else echo 'forename Asc';?>'>
+						<h3>First Name 
+						<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+						<?PHP if(strchr($order, ' ', true)=='forename') echo $orderImg;?></h3>
+					    </a> 
+					</td>
+					<td> 
+					    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
+					    <a href='client.php?orderby=<?PHP if($order=='postcode Asc') echo 'postcode Desc'; else echo 'postcode Asc';?>'>
+						<h3>Postcode 
+						<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+						<?PHP if(strchr($order, ' ', true)=='postcode') echo $orderImg;?></h3>
+					    </a>
+					</td>
 					<td>&nbsp;</td>
                 </thead>
 					<?PHP foreach($clientRows as $client) { ?>
