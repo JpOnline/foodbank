@@ -481,6 +481,8 @@
 			<?PHP
         }
         echo '<div><form action=\'reports.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>';
+    } else if(isset($_GET['mode']) && $_GET['mode'] == 'donations') {
+
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'fooditemsinshortsupply') { ?>
         <div><h1>Reports</h1></div><br /><br />
         <div><h3>Food items in short supply (4 weeks)</h3></div><br />
@@ -932,6 +934,7 @@
 				<tr><td colspan='2'>&nbsp;</td></tr>
 				<tr><td colspan='2'><h1><ul><li>Food Items</li></h1></td></tr>
 				<tr><td width='5%'></td><td><h3><ul><li><a href='reports.php?mode=fooditemsgivencomingin'>Food items given out vs. coming in</a></li></ul></h3></td></tr>
+                <tr><td width='5%'></td><td><h3><ul><li><a href='reports.php?mode=donations'>Donations</a></li></ul></h3></td></tr>
 				<tr><td colspan='2'>&nbsp;</td></tr>
 				<tr><td colspan='2'><h1><ul><li>Clients</li></h1></td></tr>
 				<tr><td width='5%'></td><td><h3><ul><li><a href='reports.php?mode=clientswith3vouchers'>Clients with 3 or more vouchers in last 12 months</a></li></ul></h3></td></tr>

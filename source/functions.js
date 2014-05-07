@@ -603,7 +603,9 @@ function validateVoucherForm() {
         for (var i = 0; i < forms.length; i++) {
             if (forms[i].type == 'text' && !forms[i].disabled) {
                 if (forms[i].value == '' || forms[i].value == null) {
-                    forms[i].style.borderColor = 'red';
+                    if(forms[i].name != 'agvoucherref' && forms[i].name != 'agContactName'){
+                        forms[i].style.borderColor = 'red';
+                    }
                     found = true;
                 } else {
                     forms[i].style.borderColor = '';

@@ -1,4 +1,5 @@
 <?php
+    date_default_timezone_set("Europe/London");
  
    //In the fake database is possible to log in the system with the user jpd21 and the password asdfjkl;
 
