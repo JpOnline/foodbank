@@ -354,7 +354,7 @@
     	<?PHP
         echo '<div><form action=\'reports.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>';
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'parcelsinlastyear') {
-        $query = $dbh->prepare("SELECT COUNT(*) AS exchanged FROM FoodParcel FP, Exchange E WHERE FP.wasGiven = true AND E.idVoucher = FP.idVoucher AND E.date >= :d");
+        $query = $dbh->prepare("SELECT COUNT(*) AS exchanged FROM Exchange E WHERE E.date >= :d");
         
         $date = date('Y-m-d', strtotime('-1 year'));
         
@@ -482,6 +482,113 @@
         }
         echo '<div><form action=\'reports.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>';
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'donations') {
+
+
+
+
+        ?>
+        <div><h1>Reports</h1></div><br /><br />
+        <div><h3>Donations</h3></div>
+            <form action='reports.php' methog='get'>
+            <input type='hidden' name='mode' value='donations'>
+            <div><select name='week'>
+                <?PHP $datei = date('Y-m-d', strtotime('last Monday'));
+                $datef = date('Y-m-d', strtotime('now'));
+                if($datei != $datef) {?>
+                    <option value='<?PHP echo $datei.','.$datef; ?>'><?PHP echo date('d-m-Y', strtotime('last Monday')) . ' to ' . date('d-m-Y', strtotime('now')); ?></option>
+                <?PHP }
+                for($i = 0; $i < 50; $i++) {
+                    $datei = date('Y-m-d', strtotime('last Monday - '.($i+1).' week'));
+                    $datef = date('Y-m-d', strtotime('last Monday - '.$i.' week')); ?>
+                    <option value='<?PHP echo $datei.','.$datef; ?>'><?PHP echo date('d-m-Y', strtotime('last Monday - '.($i+1).' week')) . ' to ' . date('d-m-Y', strtotime('last Monday - '.$i.' week')); ?></option>
+                <?PHP } ?>
+            </select>
+        <input  class="form-input-button" type='submit' value='View'></form></div><br /><br />
+        <?PHP
+        if(isset($_GET['week'])) {
+            $date = explode(',', $_GET['week']);
+            $datei = $date[0];
+            $datef = $date[1];
+            $itemsIn = array();
+            
+            echo '<h3>Week '.date('d-m-Y', strtotime($date[0])).' to '.date('d-m-Y', strtotime($date[1])).'</h3><br />';
+            
+            auditlog('Viewed reports: Food items given vs. coming in.');
+            
+            $query = $dbh->prepare("SELECT Name, id FROM FoodItem ORDER BY Name ASC");
+            if($query->execute()) {
+                $foodItems = $query->fetchAll();
+                $fiCount = $query->rowCount();
+            } else {
+                die('Unable to get food items information from database.');
+            }
+            
+            $query = $dbh->prepare("SELECT items, name, date FROM Donation WHERE date >= :di AND date <= :df");
+            if($query->execute(array(":di" => $datei, ":df" => $datef))) {
+                $donations = $query->fetchAll();
+                $donationsCount = $query->rowCount();
+                foreach($donations as $don) {
+                    $items = explode('[BRK]', $don['items']);
+                    foreach($items as $item) {
+                        $itemInfo = explode('[BRK2]', $item);
+                        $id = $itemInfo[0];
+                        $quantity = $itemInfo[1];
+                        
+                        if(!isset($itemsIn[$id])) $itemsIn[$id] = 0;
+                        $itemsIn[$id] += $quantity;
+                    }
+                }
+            } else {
+                die('Unable to get food items information from database.');
+            }?>
+
+            <div style="height:100%; overflow-y: scroll;">
+                <table style='width:100%;text-align:center;'>
+                    <thead><tr>
+                        <td><h3>Food Item</h3></td>
+                        <?PHP for($i = 0; $i < $donationsCount; $i++){ ?>
+                            <td><h3><?PHP echo $donations[$i]['name']."\n".$donations[$i]['date']; ?></h3></td>
+                        <?PHP } ?>
+                        <td><h3>Total</h3></td>
+                    </tr></thead>
+
+                    <?PHP  $itemCount = array();
+                    for($e = 0; $e < $donationsCount; $e++){
+                        $itemCount[$e] = 0;
+                    } ?>
+                    <?PHP for($i = 0; $i < $fiCount; $i++) { ?>
+                        <tr>
+                            <td><h4><?PHP echo $foodItems[$i]['Name']; ?></h4></td>
+                            <?PHP for($e = 0; $e < $donationsCount; $e++){ 
+                                $items = explode('[BRK]', $donations[$e]['items']); 
+                                $itemInfo = explode('[BRK2]', $items[$itemCount[$e]]); 
+                                if($itemInfo[0] == $foodItems[$i]['id']){ ?>
+                                    <td><h3><?PHP echo $itemInfo[1]; ?></h3></td>
+                                <?PHP $itemCount[$e] ++;
+                                }else{ ?>
+                                    <td><h3><?PHP echo 0; ?></h3></td>
+                                <?PHP } ?>  
+                            <?PHP } ?>
+                            <?PHP $itemIn = (isset($itemsIn[$foodItems[$i]['id']])) ? $itemsIn[$foodItems[$i]['id']] : 0; ?>
+                            <td><h4><?PHP echo $itemIn; ?></h4></td>
+                        </tr>
+                    <?PHP } ?>
+                    <?PHP $total = 0;
+                    for($i = 0; $i < $fiCount; $i++){
+                        $itemIn = (isset($itemsIn[$foodItems[$i]['id']])) ? $itemsIn[$foodItems[$i]['id']] : 0;
+                        $total += $itemIn;
+                    }
+                    ?>
+                </table>
+            </div>
+            <td><h4><br><?PHP echo "Week Total: ".$total; ?></h4></td>
+            <?PHP
+        }
+        echo '<div><form action=\'reports.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>';
+
+
+
+
 
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'fooditemsinshortsupply') { ?>
         <div><h1>Reports</h1></div><br /><br />
