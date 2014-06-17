@@ -1,7 +1,6 @@
 <?php
 ob_start(); // To hide header messages
 
-date_default_timezone_set('Europe/London');
 require_once('header.php');
 require_once('log.php');
 
@@ -261,7 +260,7 @@ echo '<option value=\''.$cw['id'].'\'>'.$cw['centralWarehouseName'].'</option>';
 			<?PHP } ?>
 	</select></h3>
 
-		<br /><div><span id="tixtResult"></span></div><br />
+		<br /><div><span id="txtResult"></span></div><br />
 
 	<?PHP if(getAuth($_SESSION['user']['auth'], COUNTER) || getAuth($_SESSION['user']['auth'], ADMIN)) { ?>
 			<form action='fooditem.php' method='post'>
