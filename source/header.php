@@ -71,6 +71,9 @@
 	<li><a href="problems.php" rel="self">Report Problem</a></li>
 	<li>&nbsp;</li>
     <?PHP if(getAuth($_SESSION['user']['auth'], ADMIN)) { ?>
+		<li><a href="sqlmanager.php" rel="self">SQL Manager</a></li>
+	<?PHP } ?>
+    <?PHP if(getAuth($_SESSION['user']['auth'], ADMIN)) { ?>
 		<li><a href="viewlog.php" rel="self">Audit Log</a></li>
 	<?PHP } ?>
     <?PHP if(getAuth($_SESSION['user']['auth'], ADMIN) || getAuth($_SESSION['user']['auth'], VOLCOORD)) { ?>
