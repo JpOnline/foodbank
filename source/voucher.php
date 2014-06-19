@@ -167,7 +167,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 					    <td><input type='text' name='agvoucherref' value='<?PHP if($editing) echo $voucherRow['agencyVoucherReference']; ?>' maxlength='20' id='opt' <?PHP echo $readonly; ?>></td>
 					</tr>
 					<tr>
-					    <td><h3>Agency Contact Name (optional)</h3></td>
+					    <td><h3><br />Agency Contact Name (optional)</h3></td>
 					    <td><input type='text' name='agContactName' value='<?PHP if($editing) echo $voucherRow['agencyContactName']; ?>' maxlength='20' id='opt' <?PHP echo $readonly; ?>></td>
 					</tr>
 				    <tr>
