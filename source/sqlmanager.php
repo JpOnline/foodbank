@@ -10,44 +10,53 @@ if(!isset($_SESSION)) { // Starting session
 }
 
 if(!isset($_SESSION['logged']) || !getAuth($_SESSION['user']['auth'], ADMIN)) {
-    redirect('index.php', '<h1>Wait while you are being redirected.</h1>');
+    redirect('sql_manager_login.php', '<h1>Wait while you are being redirected.</h1>');
     die();
 }
 
-$dbh = connect();
-$query = $dbh->prepare("SELECT * FROM agency");
-if($query->execute()){
-    die('<h1>Error</h1><br /><h3>Unable to get tables information from database.</h3>');
-}
-else{ 
-    $tableRows = $query->fetchAll();
-    $tableRowsCount = $query->rowCount();
-    ?>
-    <div><h3>Tables:
-	<select name='table' id='table' onchange="showTable()">
-	    <?php for($i=0; $i < $tableRowsCount; $i++) { ?>
-		<option value='<?php echo $tableRows[$i]['TABLE_NAME']; ?> '> <?php echo $tableRows[$i]['TABLE_NAME']; ?></option>
-	    <?php } ?>
-    } 
+?>
+<h3>Extreme dangerous area, don't execute any command if you don't know what are you doing.</h3>
+<form action="sqlmanager.php" method='post'>
+    <textarea cols='60' rows='6' name='sqlquery' placeholder='SQL query'><?php echo $_POST['sqlquery']; ?></textarea>  
+    <input type='submit' class='form-input-button' value='execute' name='submit'</input>
+</form>
 <?php
-$query = $dbh->prepare("SELECT * FROM Agency");
 
-if($query->execute()) {
-    $logRows = $query->fetchAll();
-    $logCount = $query->rowCount();
-    
-    for($i = 0; $i < $logCount; $i++) {
-	$query = $dbh->prepare("SELECT organization, referralCenreReference FROM Agency");
-	
-//                if($query->execute(array(":id" => $logRows[$i]['idUsers']))) {
-//                    $row = $query->fetch();
-//                    $logRows[$i]['user'] = $row['forename'] . ' ' . $row['familyName'];
-//                } else {
-//                    die('<h1>Error</h1><br /><h3>Unable to get user information from database.</h3>');
-//                }
+if(isset($_POST['submit'])){
+    $dbh = connect();
+    $query = $dbh->prepare($_POST['sqlquery']);
+    try{
+	$query->execute();
+	$error = $query->errorInfo(); //showing query error later
+	auditlog("SQL query executed: ".$_POST['sqlquery']." - ".$error[2]);
+	$tableRows = $query->fetchAll();
+	echo '<table>';
+	$count = 0; //workaround to not count the columns twice
+	echo '<tr>';
+	foreach($tableRows[0] as $columnNames=>$cel){
+	    if($count%2==0)
+		echo "<th>$columnNames</th>";
+	    $count++;
+	}
+	echo "</tr>";
+	foreach($tableRows as $row){
+	    echo "<tr>";
+	    $count=0;
+	    foreach($row as $cel){
+		if($count%2==0)
+		    echo "<td style=\"border:1px solid gray\">$cel</td>";
+		$count++;
+	    }
+	    echo "</tr>";
+	}
+	echo '</table>';
+	echo "<h4><br />$error[2]</h4>";
     }
-} else {
-    die('<h1>Error</h1><br /><h3>Unable to get tables information from database.</h3>');
+    catch(Exception $e){
+	die('Unable to execute the query');
+    }
+
 }
+
 require_once('footer.php');
 ob_flush(); ?>
