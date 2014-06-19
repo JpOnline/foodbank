@@ -35,7 +35,7 @@ if(isset($_POST['submit'])){
 	echo '<tr>';
 	foreach($tableRows[0] as $columnNames=>$cel){
 	    if($count%2==0)
-		echo "<th>$columnNames</th>";
+		echo "<th style=\"border:1px solid gray\">$columnNames</th>";
 	    $count++;
 	}
 	echo "</tr>";
