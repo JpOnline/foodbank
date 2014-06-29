@@ -1,5 +1,5 @@
 function showResult(str)
-{
+{   
     var xmlhttp;
     if(str.length == 0) {
         if(document.getElementById("allclients")) {
@@ -34,11 +34,12 @@ function showResult(str)
     } else if(document.getElementById('ajaxid').value == 'fooditem') {
     	var sel = document.getElementById('name');
     	var cat = sel.options[sel.selectedIndex].value;
-    	
+
         var sel = document.getElementById('location');
     	var loc = sel.options[sel.selectedIndex].value;
         
         xmlhttp.open("GET","getfooditem.php?cat="+cat+"&loc="+loc,true);
+        alert(cat+loc);
     }
     xmlhttp.send();
 }

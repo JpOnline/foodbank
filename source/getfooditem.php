@@ -3,6 +3,7 @@
     $catid = $_GET["cat"];
     //get the loc parameter from URL
     $locid = $_GET["loc"];
+    
 
     require('config.php');
     $dbh = connect();

@@ -586,10 +586,6 @@
         }
         echo '<div><form action=\'reports.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>';
 
-
-
-
-
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'fooditemsinshortsupply') { ?>
         <div><h1>Reports</h1></div><br /><br />
         <div><h3>Food items in short supply (4 weeks)</h3></div><br />
@@ -680,7 +676,7 @@
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'clientswith3vouchers') {
         $dbh = connect();
         $date = date('Y-m-d', strtotime('-1 year'));
-        $query = $dbh->prepare("SELECT Client.id, forename, familyName, COUNT(*) as quantity FROM Client, Voucher, Exchange WHERE Client.id = idClient AND idVoucher = Voucher.id AND date >= :d AND wasExchanged = true GROUP BY idClient HAVING COUNT(*) >= 3");
+        $query = $dbh->prepare(" SELECT Client.id, forename, familyName, COUNT(idVoucher) as quantity FROM Client, Voucher, Exchange WHERE Client.id = idClient AND idVoucher = Voucher.id AND date >= :d AND wasExchanged = true GROUP BY idClient HAVING COUNT(*) >= 3");
         
         if($query->execute(array(":d" => $date))) {
 			$clients = $query->fetchAll();
