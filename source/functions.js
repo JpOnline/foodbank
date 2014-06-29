@@ -39,7 +39,6 @@ function showResult(str)
     	var loc = sel.options[sel.selectedIndex].value;
         
         xmlhttp.open("GET","getfooditem.php?cat="+cat+"&loc="+loc,true);
-        alert(cat+loc);
     }
     xmlhttp.send();
 }
@@ -652,17 +651,6 @@ function validateVoucherForm() {
             alert('You must specify the other nature of need.');
             return false;
         }
-    }
-    var help = document.getElementById('helping');
-    if (help.value == '' || help.value == null) {
-        help.style.borderColor = 'red';
-        found = true;
-    } else {
-        help.style.borderColor = '';
-    }
-    if (found) {
-        alert('Fields in red must not be empty.');
-        return false;
     }
     var date;
     if (date = document.getElementById('datevoucherissued')) {
