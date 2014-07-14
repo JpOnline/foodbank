@@ -124,7 +124,8 @@
             
             if(getAuth($_SESSION['user']['auth'], DPSTAFF)) {
                 $readonly = 'disabled=\'disabled\'';
-            } else if(getAuth($_SESSION['user']['auth'], AGSTAFF) || getAuth($_SESSION['user']['auth'], ADMIN)) {
+            }
+            if(getAuth($_SESSION['user']['auth'], AGSTAFF) || getAuth($_SESSION['user']['auth'], ADMIN)) {
                 $readonly = '';
             }
             ?>
@@ -216,6 +217,7 @@
                 	<input class="form-input-button" type='submit' value='Update'>
 				<?PHP } ?>
 				</form>
+
                 <form action='client.php' method='post' onsubmit="return validateForm()" >
                     <input type='hidden' name='mode' value='delete'>
                     <input type='hidden' name='deleting' value='1'>
