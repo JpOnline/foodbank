@@ -479,7 +479,6 @@
         
         if($query->execute(array(":name" => strtoupper($name)))) {
              // Create the new food parcel type
-
              // senting the old vertions of a existing parcel type in case of modification of a existing datatype
             $query = $dbh->prepare("UPDATE FoodParcelType SET edited = 1 WHERE name = :n");
             $query->execute(array(":n" => $name));
@@ -508,7 +507,7 @@
                 die('<h1>Error</h1><br /><h3>Unable to get food parcel type information from database</h3><div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
         }
         redirect('foodparcel.php?mode=packnew', '<h3>Food Parcel Type created successfully.</h3>');
-        auditlog('Created new food parcel type. Name: ' . $name);
+        auditlog('Created or edited a food parcel type. Name: ' . $name);
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'viewallpacked') {
 
 	//Responsible for the reordering function of the columns

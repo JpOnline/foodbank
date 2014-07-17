@@ -430,6 +430,7 @@
         $query = $dbh->prepare("UPDATE Client SET deleted = :del WHERE id = " . $id);
         $redirectmsg = '<h1>Client deleted successfully</h1>';
         if($query->execute(array(":del" => 1 ))) {
+            auditlog('Deleted client ' . $firstname . ' ' . $lastname);
             redirect('client.php', $redirectmsg);
         } else {
             die('<h1>Error</h1><br /><h3>Unable to update client database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');

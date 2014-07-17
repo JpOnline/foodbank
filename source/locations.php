@@ -151,6 +151,16 @@
     } else if(isset($_POST['mode']) && $_POST['mode'] == 'deleteag') {
         $dbh = connect();
         $id = $_POST['id'];
+        $query = $dbh->prepare("SELECT * FROM Agency WHERE id = :id");
+            if($query->execute(array(":id" => $id))) {
+                if($query->rowCount() > 0) {
+                    $row = $query->fetch();
+                } else {
+                    die('Invalid ID.<div><form action=\'locations.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
+                }
+            } else {
+                die('Unable to get distribution point info from database.<div><form action=\'locations.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
+            }
         $query = $dbh->prepare("UPDATE Agency SET deleted = :del WHERE id = " . $id);
         $redirectmsg = '<h1>Agency deleted successfully</h1>';
         if($query->execute(array(":del" => 1 ))) {
@@ -158,15 +168,14 @@
         } else {
             die('<h1>Error</h1><br /><h3>Unable to update agencies database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
         }
+        auditlog('Agency deleted. Name: ' . $row['organisation']);
     } else if(isset($_GET['mode']) && ($_GET['mode'] == 'adddp' || $_GET['mode'] == 'viewdp')) {
         $dbh = connect();
         
         if($_GET['mode'] == 'viewdp' && isset($_GET['id'])) {
             $editing = true;
             $id = $_GET['id'];
-            
             $query = $dbh->prepare("SELECT * FROM DistributionPoint WHERE id = :id");
-            
             if($query->execute(array(":id" => $id))) {
 				if($query->rowCount() > 0) {
                     $row = $query->fetch();
@@ -270,6 +279,16 @@
     } else if(isset($_POST['mode']) && $_POST['mode'] == 'deletedp') {
         $dbh = connect();
         $id = $_POST['id'];
+        $query = $dbh->prepare("SELECT * FROM DistributionPoint WHERE id = :id");
+        if($query->execute(array(":id" => $id))) {
+            if($query->rowCount() > 0) {
+                $row = $query->fetch();
+            } else {
+                die('Invalid ID.<div><form action=\'locations.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
+            }
+        } else {
+            die('Unable to get distribution point info from database.<div><form action=\'locations.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
+        }
         $query = $dbh->prepare("UPDATE DistributionPoint SET deleted = :del WHERE id = " . $id);
         $redirectmsg = '<h1>Distribution point deleted successfully</h1>';
         if($query->execute(array(":del" => 1))) {
@@ -277,6 +296,7 @@
         } else {
             die('<h1>Error</h1><br /><h3>Unable to update distribution point database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
         }
+        auditlog('Distribution Point deleted. Name: ' . $row['distributionPointName']);
 	} else if(isset($_GET['mode']) && ($_GET['mode'] == 'addcw' || $_GET['mode'] == 'viewcw')) {
         $dbh = connect();
         
@@ -389,6 +409,17 @@
     } else if(isset($_POST['mode']) && $_POST['mode'] == 'deletecw') {
         $dbh = connect();
         $id = $_POST['id'];
+        $query = $dbh->prepare("SELECT * FROM Warehouse WHERE id = :id");   
+        if($query->execute(array(":id" => $id))) {
+            if($query->rowCount() > 0) {
+                $row = $query->fetch();
+            } else {
+                die('Invalid ID.<div><form action=\'locations.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
+            }
+        } else {
+            die('Unable to get warehouse info from database.<div><form action=\'locations.php\'><input class=\'form-input-button\' type=\'submit\' value=\'Back\'></form></div>');
+        }
+        
         $query = $dbh->prepare("UPDATE Warehouse SET deleted = :del WHERE id = " . $id);
         $redirectmsg = '<h1>Warehouse deleted successfully</h1>';
         if($query->execute(array(":del" => 1))) {
@@ -396,7 +427,7 @@
         } else {
             die('<h1>Error</h1><br /><h3>Unable to update warehouse database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
         }
-
+        auditlog('Warehouse deleted. Name: ' . $row['centralWarehouseName']);
 
     } else {
         $dbh = connect();
