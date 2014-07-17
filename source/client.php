@@ -124,7 +124,8 @@
             
             if(getAuth($_SESSION['user']['auth'], DPSTAFF)) {
                 $readonly = 'disabled=\'disabled\'';
-            } else if(getAuth($_SESSION['user']['auth'], AGSTAFF) || getAuth($_SESSION['user']['auth'], ADMIN)) {
+            }
+            if(getAuth($_SESSION['user']['auth'], AGSTAFF) || getAuth($_SESSION['user']['auth'], ADMIN)) {
                 $readonly = '';
             }
             ?>
@@ -216,6 +217,7 @@
                 	<input class="form-input-button" type='submit' value='Update'>
 				<?PHP } ?>
 				</form>
+
                 <form action='client.php' method='post' onsubmit="return validateForm()" >
                     <input type='hidden' name='mode' value='delete'>
                     <input type='hidden' name='deleting' value='1'>
@@ -428,6 +430,7 @@
         $query = $dbh->prepare("UPDATE Client SET deleted = :del WHERE id = " . $id);
         $redirectmsg = '<h1>Client deleted successfully</h1>';
         if($query->execute(array(":del" => 1 ))) {
+            auditlog('Deleted client ' . $firstname . ' ' . $lastname);
             redirect('client.php', $redirectmsg);
         } else {
             die('<h1>Error</h1><br /><h3>Unable to update client database.</h3><div><input class=\'form-input-button\' type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
