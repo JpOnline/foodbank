@@ -230,11 +230,11 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 				    </tr>
 				    <tr><td colspan='2'>&nbsp;</td></tr>
 				    <tr>
-					<td style="line-height:110%"><h3>Nature of Need</h3><?PHP if($readonly == '') { ?><br /><h5>If other, please specify.<br /><br />You can choose more than one.</h5><?PHP } ?></td>
+					<td style="line-height:110%"><h3>Nature of Need</h3><?PHP if($readonly == '') { ?><br /><h5>If other, please specify.<br /><br />Please tick one box only.</h5><?PHP } ?></td>
 					<td>
 					    <?PHP
-						$nonValue = array('asylum', 'benefitschanged', 'benefitsstopped', 'childholidaymeals', 'crisisloanrefused', 'debt', 'familycrisis', 'sickness', 'sofasurfing', 'streethomeless', 'unemployed', 'waitingforbenefittostart', 'zother');
-						$non = array('Asylum', 'Benefits Changed', 'Benefits Stopped', 'Child Holiday Meals', 'Crisis Loan Refused', 'Debt', 'Family Crisis', 'Sickness', 'Sofa Surfing', 'Street Homeless', 'Unemployed', 'Waiting for Benefit to Start', 'Other');
+						$nonValue = array('asylum', 'benefitschanged', 'benefitsstopped', 'childholidaymeals', 'sanctioned', 'debt', 'familycrisis', 'sickness', 'sofasurfing', 'streethomeless', 'unemployed', 'waitingforbenefittostart', 'zother');
+						$non = array('Asylum', 'Benefits Changed', 'Benefits Stopped', 'Child Holiday Meals', 'Sanctioned', 'Debt', 'Family Crisis', 'Sickness', 'Sofa Surfing', 'Street Homeless', 'Unemployed', 'Waiting for Benefit to Start', 'Other');
 						$j = 0;
 						$otherCheck = '';
 						for($i = 0; $i < count($non); $i++) { ?>
@@ -292,7 +292,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 					<td><h3>Point of Issue</h3></td>
 					<td> 
 					    <?PHP if($readonly == '') { ?>
-							<select id='placestype' name='placestype' onchange="getplaces()" <?PHP if(!$exchanged) echo 'disabled'; ?>>
+							<select id='placestype' name='placestype' onchange="getplaces() " <?PHP if(!$exchanged) echo 'disabled'; ?>>
 						    <option value=''>Select Location</option>
 						    <option value='agency' <?PHP if($exchanged && $exchangeRows[0]['pointOfIssueType'] == 'agency') echo 'selected=\'selected\'' ?>>Agency</option>
 						    <option value='dp' <?PHP if($exchanged && $exchangeRows[0]['pointOfIssueType'] == 'dp') echo 'selected=\'selected\'' ?>>Distribution Point</option>
@@ -332,8 +332,10 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 					</td>
 				    </tr>
 				    <tr><td colspan='2'>&nbsp;</td></tr>
+				</talbe>
 
- <!-- new part -->
+<!-- new part -->
+				<table style="width: 100%;">
 				    <br><br>
 				    <td><h3>Parcels to be given out</h3><br /><h5>Ctrl+click to select more than one.</h5><br /></td>
 				    <?php
