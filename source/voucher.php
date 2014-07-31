@@ -285,7 +285,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 				<table style="width: 100%;">
 				    <tr>
 					<td><h3>Date Food Parcel(s) given</h3></td>
-					<td><input type='text' id='dateGiven' name='dategiven' value='<?PHP if($editing && $exchanged) echo date('d-m-Y', strtotime($exchangeRows[0]['date'])); else echo date('d-m-Y'); ?>' <?PHP if(!$exchanged) echo 'disabled'; ?> maxlength='10' <?PHP echo $readonly; ?>></td>
+					<td><input type='date' id='dateGiven' name='dategiven' value='<?PHP if($editing && $exchanged) echo date('Y-m-d', strtotime($exchangeRows[0]['date'])); else echo date('Y-m-d'); ?>' <?PHP if(!$exchanged) echo 'disabled'; ?> maxlength='10' <?PHP echo $readonly; ?>></td>
 				    </tr>
 				    <tr><td colspan='2'>&nbsp;</td></tr>
 				    <tr>
