@@ -628,16 +628,19 @@
         <div><h3>Parcels packed</h3></div><br />
 
         <!-- drop-down menu to chose the foodparcel filter -->
-        <td><h3>Filter by food parcel type</h3></td>
-            <td><select name='foodparceltype' id='foodparceltype' onchange="window.document.location.href=this.options[this.selectedIndex].value;" >
-                    <option value='foodparcel.php?mode=viewallpacked&orderby=<?PHP echo $order ?>'>Select</option>
-                    <option value='foodparcel.php?mode=viewallpacked&orderby=<?PHP echo $order ?>&filter=all'>All</option>
-                    <?PHP for($i = 0; $i < $fptypecountdistinct; $i++) { ?>
-                        <option value='foodparcel.php?mode=viewallpacked&orderby=<?PHP echo $order ?>&filter=<?PHP echo $rowsfptypedistinct[$i]['id']; ?>' ><?PHP echo $rowsfptypedistinct[$i]['name']; ?></option>
-                    <?PHP } ?>
-                </select>
-            </td>
-
+        <table style="width: 50%">
+            <tr>
+            <td><h4>Filter by food parcel type</h4></td>
+                <td><select name='foodparceltype' id='foodparceltype' onchange="window.document.location.href=this.options[this.selectedIndex].value;" >
+                        <option value='foodparcel.php?mode=viewallpacked&orderby=<?PHP echo $order ?>'>Select</option>
+                        <option value='foodparcel.php?mode=viewallpacked&orderby=<?PHP echo $order ?>&filter=all'>All</option>
+                        <?PHP for($i = 0; $i < $fptypecountdistinct; $i++) { ?>
+                            <option value='foodparcel.php?mode=viewallpacked&orderby=<?PHP echo $order ?>&filter=<?PHP echo $rowsfptypedistinct[$i]['id']; ?>' ><?PHP echo $rowsfptypedistinct[$i]['name']; ?></option>
+                        <?PHP } ?>
+                    </select>
+                </td>
+            </tr>
+        </table><br>
         <div><table style="width: 100%; text-align:center;">
         	<thead>
 			<td> 
@@ -724,16 +727,19 @@
 		<div><h3>Parcels given out</h3></div><br />
 
         <!-- drop-down menu to chose the foodparcel filter -->
-        <td><h3>Filter by food parcel type</h3></td>
-            <td><select name='foodparceltype' id='foodparceltype' onchange="window.document.location.href=this.options[this.selectedIndex].value;" >
-                    <option value='foodparcel.php?mode=viewallgiven&orderby=<?PHP echo $order ?>'>Select</option>
-                    <option value='foodparcel.php?mode=viewallgiven&orderby=<?PHP echo $order ?>&filter=all'>All</option>
-                    <?PHP for($i = 0; $i < $fptypecountdistinct; $i++) { ?>
-                        <option value='foodparcel.php?mode=viewallgiven&orderby=<?PHP echo $order ?>&filter=<?PHP echo $rowsfptypedistinct[$i]['id']; ?>' ><?PHP echo $rowsfptypedistinct[$i]['name']; ?></option>
-                    <?PHP } ?>
-                </select>
-            </td>
-
+        <div><table style="width: 50%">
+            <tr>
+            <td><h4>Filter by food parcel type</h4></td>
+                <td><select name='foodparceltype' id='foodparceltype' onchange="window.document.location.href=this.options[this.selectedIndex].value;" >
+                        <option value='foodparcel.php?mode=viewallgiven&orderby=<?PHP echo $order ?>'>Select</option>
+                        <option value='foodparcel.php?mode=viewallgiven&orderby=<?PHP echo $order ?>&filter=all'>All</option>
+                        <?PHP for($i = 0; $i < $fptypecountdistinct; $i++) { ?>
+                            <option value='foodparcel.php?mode=viewallgiven&orderby=<?PHP echo $order ?>&filter=<?PHP echo $rowsfptypedistinct[$i]['id']; ?>' ><?PHP echo $rowsfptypedistinct[$i]['name']; ?></option>
+                        <?PHP } ?>
+                    </select>
+                </td>
+            </tr>
+        </table><br>
 		<div><table style="width: 100%; text-align:center;">
 			<thead><tr>
 				<td> 
