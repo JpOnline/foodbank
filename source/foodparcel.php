@@ -509,69 +509,143 @@
         redirect('foodparcel.php?mode=packnew', '<h3>Food Parcel Type created successfully.</h3>');
         auditlog('Created or edited a food parcel type. Name: ' . $name);
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'viewallpacked') {
-
-	//Responsible for the reordering function of the columns
-	$order = (isset($_GET['orderby'])) ? $_GET['orderby'] : 'id Desc' ;
-	//Cut the first word from the orderImg variable, we stay with the DESC or ASC part with a space to retrieve the narrow image
-	$orderImg = strchr($order, ' ');
-	$orderImg = '<img style="vertical-align:middle" src=\'rw_common/images/navArrow' . substr($orderImg,1) . '.jpeg\' style=\'border:0;\'>';
+    	//Responsible for the reordering function of the columns
+    	$order = (isset($_GET['orderby'])) ? $_GET['orderby'] : 'packingDate Desc' ;
+        $filter = (isset($_GET['filter'])) ? $_GET['filter'] : 'all' ;
+    	//Cut the first word from the orderImg variable, we stay with the DESC or ASC part with a space to retrieve the narrow image
+    	$orderImg = strchr($order, ' ');
+    	$orderImg = '<img style="vertical-align:middle" src=\'rw_common/images/navArrow' . substr($orderImg,1) . '.jpeg\' style=\'border:0;\'>';
 
         $dbh = connect();
-        $query = $dbh->prepare("SELECT id, referenceNumber, packingDate, expiryDate, idAgency, idDP, idWarehouse FROM FoodParcel WHERE wasGiven = 0 ORDER BY " . $order);
-        
-        if($query->execute()) {
-            $packedCount = $query->rowCount();
-            $rowsPacked = $query->fetchAll();
-            $locations = array();
-            $i = 0;
-            foreach($rowsPacked as $row) {
-                if($row['idAgency'] != '0') {
-                    $query = $dbh->prepare("SELECT organisation FROM Agency WHERE id = " . $row['idAgency']);
-                    
-                    if($query->execute()) {
-                        $location = $query->fetch();
-                        $locations[$i]['typeLocation'] = 'ag';
-                        $locations[$i]['location'] = $location['organisation'];
-                        $locations[$i++]['idLocation'] = $row['idAgency'];
-                    } else {
-			            die('Unable to get packed parcel location from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
-                    }
-                } else if($row['idDP'] != '0') {
-                    $query = $dbh->prepare("SELECT distributionPointName FROM DistributionPoint WHERE id = " . $row['idDP']);
-                    
-                    if($query->execute()) {
-                        $location = $query->fetch();
-                        $locations[$i]['typeLocation'] = 'dp';
-                        $locations[$i]['location'] = $location['distributionPointName'];
-                        $locations[$i++]['idLocation'] = $row['idDP'];
-                    } else {
-			            die('Unable to get packed parcel location from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
-                    }
-                } else if($row['idWarehouse'] != '0') {
-                    $query = $dbh->prepare("SELECT centralWarehouseName FROM Warehouse WHERE id = " . $row['idWarehouse']);
-                    
-                    if($query->execute()) {
-                        $location = $query->fetch();
-                        $locations[$i]['typeLocation'] = 'cw';
-                        $locations[$i]['location'] = $location['centralWarehouseName'];
-                        $locations[$i++]['idLocation'] = $row['idWarehouse'];
-                    } else {
-			            die('Unable to get packed parcel location from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+        //diferent queries if there is or there is not a filter by food parcel type
+        if($filter != 'all'){ //if there is a filter
+            $query = $dbh->prepare("SELECT id, referenceNumber, packingDate, expiryDate, idAgency, idDP, idWarehouse FROM FoodParcel WHERE idFPType = ".$filter." AND wasGiven = 0 ORDER BY " . $order);
+            if($query->execute()) {
+                $packedCount = $query->rowCount();
+                $rowsPacked = $query->fetchAll();
+                $locations = array();
+                $i = 0;
+                foreach($rowsPacked as $row) {
+                    if($row['idAgency'] != '0') {
+                        $query = $dbh->prepare("SELECT organisation FROM Agency WHERE id = " . $row['idAgency']);
+                        
+                        if($query->execute()) {
+                            $location = $query->fetch();
+                            $locations[$i]['typeLocation'] = 'ag';
+                            $locations[$i]['location'] = $location['organisation'];
+                            $locations[$i++]['idLocation'] = $row['idAgency'];
+                        } else {
+                            die('Unable to get packed parcel location from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+                        }
+                    } else if($row['idDP'] != '0') {
+                        $query = $dbh->prepare("SELECT distributionPointName FROM DistributionPoint WHERE id = " . $row['idDP']);
+                        
+                        if($query->execute()) {
+                            $location = $query->fetch();
+                            $locations[$i]['typeLocation'] = 'dp';
+                            $locations[$i]['location'] = $location['distributionPointName'];
+                            $locations[$i++]['idLocation'] = $row['idDP'];
+                        } else {
+                            die('Unable to get packed parcel location from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+                        }
+                    } else if($row['idWarehouse'] != '0') {
+                        $query = $dbh->prepare("SELECT centralWarehouseName FROM Warehouse WHERE id = " . $row['idWarehouse']);
+                        
+                        if($query->execute()) {
+                            $location = $query->fetch();
+                            $locations[$i]['typeLocation'] = 'cw';
+                            $locations[$i]['location'] = $location['centralWarehouseName'];
+                            $locations[$i++]['idLocation'] = $row['idWarehouse'];
+                        } else {
+                            die('Unable to get packed parcel location from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+                        }
                     }
                 }
+                auditlog('Viewed all food parcels packed');
+            } else {
+                die('Unable to get packed parcels from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
             }
-            auditlog('Viewed all food parcels packed');
-        } else {
-            die('Unable to get packed parcels from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+        }else{// if there is not a filter or the filter ask for all foodparcel type
+            $query = $dbh->prepare("SELECT id, referenceNumber, packingDate, expiryDate, idAgency, idDP, idWarehouse FROM FoodParcel WHERE wasGiven = 0 ORDER BY " . $order);
+            if($query->execute()) {
+                $packedCount = $query->rowCount();
+                $rowsPacked = $query->fetchAll();
+                $locations = array();
+                $i = 0;
+                foreach($rowsPacked as $row) {
+                    if($row['idAgency'] != '0') {
+                        $query = $dbh->prepare("SELECT organisation FROM Agency WHERE id = " . $row['idAgency']);
+                        
+                        if($query->execute()) {
+                            $location = $query->fetch();
+                            $locations[$i]['typeLocation'] = 'ag';
+                            $locations[$i]['location'] = $location['organisation'];
+                            $locations[$i++]['idLocation'] = $row['idAgency'];
+                        } else {
+                            die('Unable to get packed parcel location from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+                        }
+                    } else if($row['idDP'] != '0') {
+                        $query = $dbh->prepare("SELECT distributionPointName FROM DistributionPoint WHERE id = " . $row['idDP']);
+                        
+                        if($query->execute()) {
+                            $location = $query->fetch();
+                            $locations[$i]['typeLocation'] = 'dp';
+                            $locations[$i]['location'] = $location['distributionPointName'];
+                            $locations[$i++]['idLocation'] = $row['idDP'];
+                        } else {
+                            die('Unable to get packed parcel location from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+                        }
+                    } else if($row['idWarehouse'] != '0') {
+                        $query = $dbh->prepare("SELECT centralWarehouseName FROM Warehouse WHERE id = " . $row['idWarehouse']);
+                        
+                        if($query->execute()) {
+                            $location = $query->fetch();
+                            $locations[$i]['typeLocation'] = 'cw';
+                            $locations[$i]['location'] = $location['centralWarehouseName'];
+                            $locations[$i++]['idLocation'] = $row['idWarehouse'];
+                        } else {
+                            die('Unable to get packed parcel location from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+                        }
+                    }
+                }
+                auditlog('Viewed all food parcels packed');
+            } else {
+                die('Unable to get packed parcels from database.<div><input class=\'form-input-button\'  type=\'submit\' value=\'Back\' onclick=\'window.history.back()\'></div>');
+            }
         }
+
+        //the query to show all foodparcel types for the drop-down menu
+        $query = $dbh->prepare("SELECT  name, id FROM FoodParcelType WHERE edited = 0");
+        if($query->execute()) {
+            $fptypecountdistinct = $query->rowCount();
+            $rowsfptypedistinct = $query->fetchAll();
+        } else {
+            die('Unable to get food parcel types from database.<div><form action=\'foodparcel.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>');
+        }
+
         ?>
         <div><h1>Food parcels</h1></div><br /><br />
         <div><h3>Parcels packed</h3></div><br />
+
+        <!-- drop-down menu to chose the foodparcel filter -->
+        <table style="width: 50%">
+            <tr>
+            <td><h4>Filter by food parcel type</h4></td>
+                <td><select name='foodparceltype' id='foodparceltype' onchange="window.document.location.href=this.options[this.selectedIndex].value;" >
+                        <option value='foodparcel.php?mode=viewallpacked&orderby=<?PHP echo $order ?>'>Select</option>
+                        <option value='foodparcel.php?mode=viewallpacked&orderby=<?PHP echo $order ?>&filter=all'>All</option>
+                        <?PHP for($i = 0; $i < $fptypecountdistinct; $i++) { ?>
+                            <option value='foodparcel.php?mode=viewallpacked&orderby=<?PHP echo $order ?>&filter=<?PHP echo $rowsfptypedistinct[$i]['id']; ?>' ><?PHP echo $rowsfptypedistinct[$i]['name']; ?></option>
+                        <?PHP } ?>
+                    </select>
+                </td>
+            </tr>
+        </table><br>
         <div><table style="width: 100%; text-align:center;">
         	<thead>
 			<td> 
 			    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
-			    <a href='foodparcel.php?mode=viewallpacked&orderby=<?PHP if($order=='referenceNumber Asc') echo 'referenceNumber Desc'; else echo 'referenceNumber Asc';?>'>
+			    <a href='foodparcel.php?mode=viewallpacked&orderby=<?PHP if($order=='referenceNumber Asc') echo 'referenceNumber Desc'; else echo 'referenceNumber Asc';?>&filter=<?PHP echo $filter ?>'>
 				<h3>Parcel no. 
 				<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
 				<?PHP if(strchr($order, ' ', true)=='referenceNumber') echo $orderImg;?></h3>
@@ -579,7 +653,7 @@
 			</td>
 			<td> 
 			    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
-			    <a href='foodparcel.php?mode=viewallpacked&orderby=<?PHP if($order=='packingDate Asc') echo 'packingDate Desc'; else echo 'packingDate Asc';?>'>
+			    <a href='foodparcel.php?mode=viewallpacked&orderby=<?PHP if($order=='packingDate Asc') echo 'packingDate Desc'; else echo 'packingDate Asc';?>&filter=<?PHP echo $filter ?>'>
 				<h3>Packing date 
 				<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
 				<?PHP if(strchr($order, ' ', true)=='packingDate') echo $orderImg;?></h3>
@@ -587,7 +661,7 @@
 			</td>
 			<td> 
 			    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
-			    <a href='foodparcel.php?mode=viewallpacked&orderby=<?PHP if($order=='expiryDate Asc') echo 'expiryDate Desc'; else echo 'expiryDate Asc';?>'>
+			    <a href='foodparcel.php?mode=viewallpacked&orderby=<?PHP if($order=='expiryDate Asc') echo 'expiryDate Desc'; else echo 'expiryDate Asc';?>&filter=<?PHP echo $filter ?>'>
 				<h3>Expiry date 
 				<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
 				<?PHP if(strchr($order, ' ', true)=='expiryDate') echo $orderImg;?></h3>
@@ -609,51 +683,88 @@
 		<div><form action='foodparcel.php'><input class="form-input-button" type='submit' value='Back'></form></div>
 		<?PHP
     } else if(isset($_GET['mode']) && $_GET['mode'] == 'viewallgiven') {
-	 
-	//Responsible for the reordering function of the columns
-	$order = (isset($_GET['orderby'])) ? $_GET['orderby'] : 'date Desc' ;
-	//Cut the first word from the orderImg variable, we stay with the DESC or ASC part with a space to retrieve the narrow image
-	$orderImg = strchr($order, ' ');
-	$orderImg = '<img style="vertical-align:middle" src=\'rw_common/images/navArrow' . substr($orderImg,1) . '.jpeg\' style=\'border:0;\'>';
-	 
-	$dbh = connect();
-        $query = $dbh->prepare("SELECT DISTINCT FP.referenceNumber, FP.packingDate, FP.expiryDate, FP.idVoucher, E.date FROM Exchange E, FoodParcel FP WHERE E.idVoucher = FP.idVoucher ORDER BY ".$order);
-        
-        if($query->execute()) {
-            $givenCount = $query->rowCount();
-            $rowsGiven = $query->fetchAll();
-        } else {
-            die('Unable to get given parcels from database.');
+    	//Responsible for the reordering function of the columns
+    	$order = (isset($_GET['orderby'])) ? $_GET['orderby'] : 'date Desc' ;
+        $filter = (isset($_GET['filter'])) ? $_GET['filter'] : 'all' ;
+    	//Cut the first word from the orderImg variable, we stay with the DESC or ASC part with a space to retrieve the narrow image
+    	$orderImg = strchr($order, ' ');
+    	$orderImg = '<img style="vertical-align:middle" src=\'rw_common/images/navArrow' . substr($orderImg,1) . '.jpeg\' style=\'border:0;\'>';
+    	 
+    	$dbh = connect();
+        //diferent queries if there is or there is not a filter by food parcel type
+        if($filter != 'all'){//if there is a filter
+            $query = $dbh->prepare("SELECT DISTINCT FP.referenceNumber, FP.packingDate, FP.expiryDate, FP.idVoucher, E.date FROM Exchange E, FoodParcel FP WHERE FP.idFPType = ".$filter." AND E.idVoucher = FP.idVoucher ORDER BY ".$order);
+            
+            if($query->execute()) {
+                $givenCount = $query->rowCount();
+                $rowsGiven = $query->fetchAll();
+            } else {
+                die('Unable to get given parcels from database.');
+            }
+        }else{// if there is not a filter or the filter ask for all foodparcel type
+            $query = $dbh->prepare("SELECT DISTINCT FP.referenceNumber, FP.packingDate, FP.expiryDate, FP.idVoucher, E.date FROM Exchange E, FoodParcel FP WHERE E.idVoucher = FP.idVoucher ORDER BY ".$order);
+            
+            if($query->execute()) {
+                $givenCount = $query->rowCount();
+                $rowsGiven = $query->fetchAll();
+            } else {
+                die('Unable to get given parcels from database.');
+            }
         }
+
+        //the query to show all foodparcel types for the drop-down menu
+        $query = $dbh->prepare("SELECT  name, id FROM FoodParcelType WHERE edited = 0");
+        if($query->execute()) {
+            $fptypecountdistinct = $query->rowCount();
+            $rowsfptypedistinct = $query->fetchAll();
+        } else {
+            die('Unable to get food parcel types from database.<div><form action=\'foodparcel.php\'><input class=\'form-input-button\'  type=\'submit\' value=\'Back\'></form></div>');
+        }
+
         auditlog('Viewed all food parcels given.');
         ?>
 		<div><h1>Food parcels</h1></div><br /><br />
 		<div><h3>Parcels given out</h3></div><br />
+
+        <!-- drop-down menu to chose the foodparcel filter -->
+        <div><table style="width: 50%">
+            <tr>
+            <td><h4>Filter by food parcel type</h4></td>
+                <td><select name='foodparceltype' id='foodparceltype' onchange="window.document.location.href=this.options[this.selectedIndex].value;" >
+                        <option value='foodparcel.php?mode=viewallgiven&orderby=<?PHP echo $order ?>'>Select</option>
+                        <option value='foodparcel.php?mode=viewallgiven&orderby=<?PHP echo $order ?>&filter=all'>All</option>
+                        <?PHP for($i = 0; $i < $fptypecountdistinct; $i++) { ?>
+                            <option value='foodparcel.php?mode=viewallgiven&orderby=<?PHP echo $order ?>&filter=<?PHP echo $rowsfptypedistinct[$i]['id']; ?>' ><?PHP echo $rowsfptypedistinct[$i]['name']; ?></option>
+                        <?PHP } ?>
+                    </select>
+                </td>
+            </tr>
+        </table><br>
 		<div><table style="width: 100%; text-align:center;">
 			<thead><tr>
 				<td> 
 				    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
-				    <a href='foodparcel.php?mode=viewallgiven&orderby=<?PHP if($order=='referenceNumber Asc') echo 'referenceNumber Desc'; else echo 'referenceNumber Asc';?>'>
+				    <a href='foodparcel.php?mode=viewallgiven&orderby=<?PHP if($order=='referenceNumber Asc') echo 'referenceNumber Desc'; else echo 'referenceNumber Asc';?>&filter=<?PHP echo $filter ?>'>
 					<h3>Reference number
 					<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
 					<?PHP if(strchr($order, ' ', true)=='referenceNumber') echo $orderImg;?></h3>
 				    </a>
 				<td> 
 				    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
-				    <a href='foodparcel.php?mode=viewallgiven&orderby=<?PHP if($order=='packingDate Asc') echo 'packingDate Desc'; else echo 'packingDate Asc';?>'>
+				    <a href='foodparcel.php?mode=viewallgiven&orderby=<?PHP if($order=='packingDate Asc') echo 'packingDate Desc'; else echo 'packingDate Asc';?>&filter=<?PHP echo $filter ?>'>
 					<h3>Packing date
 					<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
 					<?PHP if(strchr($order, ' ', true)=='packingDate') echo $orderImg;?></h3> </a>
 				<td> 
 					    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
-					    <a href='foodparcel.php?mode=viewallgiven&orderby=<?PHP if($order=='expiryDate Asc') echo 'expiryDate Desc'; else echo 'expiryDate Asc';?>'>
+					    <a href='foodparcel.php?mode=viewallgiven&orderby=<?PHP if($order=='expiryDate Asc') echo 'expiryDate Desc'; else echo 'expiryDate Asc';?>&filter=<?PHP echo $filter ?>'>
 					<h3>Expiry date
 						<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
 						<?PHP if(strchr($order, ' ', true)=='expiryDate') echo $orderImg;?></h3>
 					    </a>
 				<td> 
 						    <!-- it sends a configuration of ordering of the column, if is asc become desc and vice versa -->
-						    <a href='foodparcel.php?mode=viewallgiven&orderby=<?PHP if($order=='date Asc') echo 'date Desc'; else echo 'date Asc';?>'>
+						    <a href='foodparcel.php?mode=viewallgiven&orderby=<?PHP if($order=='date Asc') echo 'date Desc'; else echo 'date Asc';?>&filter=<?PHP echo $filter ?>'>
 					<h3>Date given
 							<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
 							<?PHP if(strchr($order, ' ', true)=='date') echo $orderImg;?></h3>

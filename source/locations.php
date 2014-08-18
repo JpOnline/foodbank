@@ -64,7 +64,7 @@
         	</tr>
         	<tr>
                 <td><h3>Referral centre reference *</h3></td>
-                <td><input type='text' value='<?PHP if($editing) echo $row['referralCentreReference']; ?>' name='rcr' size='30' maxlength='100' <?PHP echo $readonly; ?>></td>
+                <td><input type='text' value='<?PHP if($editing) echo $row['referralCentreReference']; ?>' name='rcr' size='30' maxlength='15' <?PHP echo $readonly; ?>></td>
             </tr>
             <tr>
                 <td><h3>Area of Assistance *</h3></td>
@@ -215,7 +215,7 @@
 			</tr>
 			<tr>
 				<td><h3>Address 1 *</h3></td>
-				<td><input type='text' value='<?PHP if($editing) echo $row['address1']; ?>' name='address1' size='30' maxlength='100' <?PHP echo $readonly; ?>></td>
+				<td><input type='text' value='<?PHP if($editing) echo $row['address1']; ?>' name='address1' size='30' maxlength='32' <?PHP echo $readonly; ?>></td>
 			</tr>
 			<tr>
 				<td><h3>Address 2</h3></td>
@@ -345,7 +345,7 @@
 				</tr>
 				<tr>
 					<td><h3>Address 1 *</h3></td>
-					<td><input type='text' value='<?PHP if($editing) echo $row['address1']; ?>' name='address1' size='30' maxlength='100' <?PHP echo $readonly; ?>></td>
+					<td><input type='text' value='<?PHP if($editing) echo $row['address1']; ?>' name='address1' size='30' maxlength='32' <?PHP echo $readonly; ?>></td>
                 </tr>
 				<tr>
 					<td><h3>Address 2</h3></td>
