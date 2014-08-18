@@ -33,12 +33,12 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `Agency` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `organisation` varchar(32) DEFAULT NULL,
+  `organisation` varchar(200) DEFAULT NULL,
   `referralCentreReference` varchar(15) DEFAULT NULL,
   `homeTelephone` varchar(15) DEFAULT NULL,
   `mobileTelephone` varchar(15) DEFAULT NULL,
-  `address1` varchar(32) DEFAULT NULL,
-  `address2` varchar(32) DEFAULT NULL,
+  `address1` varchar(100) DEFAULT NULL,
+  `address2` varchar(100) DEFAULT NULL,
   `postcode` varchar(10) DEFAULT NULL,
   `town` varchar(32) DEFAULT NULL,
   `deleted` tinyint(4) DEFAULT '0',

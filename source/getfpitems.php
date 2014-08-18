@@ -27,31 +27,37 @@
 	        $found = true;
     	    $rows = $query->fetchAll();
             
-            $query = $dbh->prepare("SELECT referenceNumber FROM FoodParcel WHERE referenceNumber LIKE '" . $startingLetter . "%' ORDER BY referenceNumber DESC LIMIT 0,1");
+            $query = $dbh->prepare("SELECT referenceNumber FROM FoodParcel WHERE referenceNumber LIKE '" . $startingLetter . "0%' ORDER BY referenceNumber DESC LIMIT 0,1");
             if($query->execute()) {
                 if($query->rowCount() > 0) {
                     $found = true;
                     $row = $query->fetch();
-                    
-                    $ref = substr($row['referenceNumber'], strlen($rows[0]['startingLetter']));
-                    if(intval($ref) < 9) {
-                        $refnum = $rows[0]['startingLetter'] . "000" . (intval($ref)+1);
-                    } else if(intval($ref) < 99) {
-                        $refnum = $rows[0]['startingLetter'] . "00" . (intval($ref)+1);;
-                    } else if(intval($ref) < 999) {
-                        $refnum = $rows[0]['startingLetter'] . "0" . (intval($ref)+1);;
-                    } else {
-                        $refnum = $rows[0]['startingLetter'] . (intval($ref)+1);;
-                    }
+
+		    $ref = $row['referenceNumber'];
+		    //Sum one to the last parcel in the database
+		    do{
+			$ref = substr($ref, strlen($rows[0]['startingLetter']));
+			if(intval($ref) < 9) {
+			    $ref = $rows[0]['startingLetter'] . "000" . (intval($ref)+1);
+			} else if(intval($ref) < 99) {
+			    $ref = $rows[0]['startingLetter'] . "00" . (intval($ref)+1);
+			} else if(intval($ref) < 999) {
+			    $ref = $rows[0]['startingLetter'] . "0" . (intval($ref)+1);
+			} else {
+			    $ref = $rows[0]['startingLetter'] . (intval($ref)+1);
+			}
+			$checkQuery = $dbh->prepare("SELECT referenceNumber FROM FoodParcel WHERE referenceNumber LIKE '" . $ref . "'");
+		    //Check if the suggested reference number isn't already present in the database
+		    }while($checkQuery->execute() && $checkQuery->rowCount() > 0);
                 } else {
-                    $refnum = $rows[0]['startingLetter'] . '0001';
+                    $ref = $rows[0]['startingLetter'] . '0001';
                 }
                 
                 for($i = 0; $i < count($rows); $i++) {
                     $ret .= '<tr><td><h3>' . $rows[$i]['Name'] . '</h3></td><td><h3>' . $rows[$i]['quantity'] . '</h3></td></tr>';
                 }
                 $ret .= '</table>[BRK]';
-                $ret .= $refnum;
+                $ret .= $ref;
                 $ret .= '[BRK]';
                 $ret .= $rows[0]['tagColour'];
             } else {

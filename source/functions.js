@@ -1,4 +1,4 @@
-function showResult(str)
+function showResult(str)//{{{
 {   
     var xmlhttp;
     if(str.length == 0) {
@@ -41,8 +41,8 @@ function showResult(str)
         xmlhttp.open("GET","getfooditem.php?cat="+cat+"&loc="+loc,true);
     }
     xmlhttp.send();
-}
-function hideResult() {
+}//}}}
+function hideResult() {//{{{
     document.getElementById("txtResult").innerHTML="";
     if(document.getElementById('ajaxid').value == 'client') {
         document.getElementById("clientinfo").value = "";
@@ -50,8 +50,8 @@ function hideResult() {
     if(document.getElementById("allclients")) {
         document.getElementById("allclients").style.display = '';
     }
-}
-function getfoodparcelitems() {
+}//}}}
+function getfoodparcelitems() {//{{{
     var xmlhttp;
     var sel = document.getElementById('foodparceltype');
     var id = sel.options[sel.selectedIndex].value;
@@ -85,8 +85,8 @@ function getfoodparcelitems() {
     
     xmlhttp.open("GET","getfpitems.php?id="+id,true);
     xmlhttp.send();
-}
-function getplaces() {
+}//}}}
+function getplaces() {//{{{
     var xmlhttp;
     var sel = document.getElementById('placestype');
     var type = sel.options[sel.selectedIndex].value;
@@ -119,8 +119,8 @@ function getplaces() {
     
     xmlhttp.open("GET","getplaces.php?t="+type,true);
     xmlhttp.send();
-}
-function fptitems() {
+}//}}}
+function fptitems() {//{{{
     var sel = document.getElementById('selectfptype');
     var typeid = sel.options[sel.selectedIndex].value;
     
@@ -181,16 +181,16 @@ function fptitems() {
     
     xmlhttp.open("GET","getfptitems.php?id="+typeid,true);
     xmlhttp.send();
-}
-function activateSelectFPTitem(el) {
+}//}}}
+function activateSelectFPTitem(el) {//{{{
     var select = document.getElementById('quantity'+el.id.substring(4));
     if(el.checked) {
         select.disabled = false;
     } else {
         select.disabled = true;
     }
-}
-function checkothernature() {
+}//}}}
+function checkothernature() {//{{{
     var sel = document.getElementById('othernatureinput');
     
     if(sel.checked) {
@@ -200,16 +200,16 @@ function checkothernature() {
         document.getElementById('othernature').style.display = 'none';
         document.getElementById('othernaturefield').disabled = true;
     }
-}
-function printpackingform() {
+}//}}}
+function printpackingform() {//{{{
     var sel = document.getElementById('foodparceltype');
     var type = sel.options[sel.selectedIndex].value;
     
     myWindow = window.open('printpackingform.php?t=' + type,'');
     myWindow.focus();
     myWindow.print();
-}
-function printIssuedVoucher(){
+}//}}}
+function printIssuedVoucher(){//{{{
     var selClient = document.getElementById('clientFullName');
     var selAgency = document.getElementById('agencyreferrer');
     var clientName = selClient.options[selClient.selectedIndex].innerHTML;
@@ -220,8 +220,8 @@ function printIssuedVoucher(){
     myWindow = window.open('printissuedvoucher.php?n='+clientName+'&cId='+clientId+'&a='+agency+'&d='+date,'');
     myWindow.focus();
     myWindow.print();
-}
-function validateForm() {
+}//}}}
+function validateForm() {//{{{
     var remove;
     if(remove = document.getElementById('removeuser')) {
         if(remove.checked) {
@@ -300,8 +300,8 @@ function validateForm() {
             return false;
         }
     }
-}
-function validateFormPackNewFP() {
+}//}}}
+function validateFormPackNewFP() {//{{{
     var foodparceltype;
     if(foodparceltype = document.getElementById('foodparceltype')) {
         if(foodparceltype.selectedIndex == 0) {
@@ -327,8 +327,8 @@ function validateFormPackNewFP() {
             return false;
         }
     }
-}
-function verifyDate(el) {
+}//}}}
+function verifyDate(el) {//{{{
 	var dat = el.value;
     if(!isValidDate(dat)) {
         alert('Invalid date.');
@@ -336,8 +336,8 @@ function verifyDate(el) {
     } else {
         el.style.borderColor = '';
     }
-}
-function isValidDate(date)
+}//}}}
+function isValidDate(date)//{{{
 {
     var matches = /^(\d{2})[-\/](\d{2})[-\/](\d{4})$/.exec(date);
     if (matches == null) return false;
@@ -351,9 +351,9 @@ function isValidDate(date)
     return composedDate.getDate() == d &&
     composedDate.getMonth() == m &&
     composedDate.getFullYear() == y;
-}
+}//}}}
 
-function activateDonationForms(check) {
+function activateDonationForms(check) {//{{{
     var num = check.id;
     var forms = document.getElementsByTagName('input');
     var wh = document.getElementById('warehouses'+num);
@@ -373,8 +373,8 @@ function activateDonationForms(check) {
             }
         }
     }
-}
-function edititem(id) {
+}//}}}
+function edititem(id) {//{{{
     var item = document.getElementById('item'+id);
     var text = item.innerHTML;//.toUpperCase();
     var button = document.getElementById('edititem'+id);
@@ -383,8 +383,8 @@ function edititem(id) {
     
     button.value = 'submit';
     button.setAttribute('onClick', 'javascript: updateediteditem('+id+');');
-}
-function updateediteditem(id) {
+}//}}}
+function updateediteditem(id) {//{{{
     var newitem = document.getElementById('newvalue'+id).value;
     if(newitem == '') {
         return;
@@ -418,8 +418,8 @@ function updateediteditem(id) {
     
 	xmlhttp.open("GET","updateitemdb.php?mode=update&t="+newitem+"&id="+id,true);
     xmlhttp.send();
-}
-function newitem() {
+}//}}}
+function newitem() {//{{{
     var newitem = document.getElementById('newitem').value;
     
     if(newitem == '') {
@@ -466,8 +466,8 @@ function newitem() {
     
     xmlhttp.open("GET","updateitemdb.php?mode=add&t="+newitem,true);
     xmlhttp.send();
-}
-function removefptype() {
+}//}}}
+function removefptype() {//{{{
     var xmlhttp;
     var sel = document.getElementById('selectfptype');
     var fptype = sel.options[sel.selectedIndex].value;
@@ -522,8 +522,8 @@ function removefptype() {
     } else {
         return;
     }
-}
-function showExchange(el) {
+}//}}}
+function showExchange(el) {//{{{
     var check = document.getElementById('exchange');
     if(el.checked) {
         check.style.display = '';
@@ -546,8 +546,8 @@ function showExchange(el) {
 	document.getElementById('submitAndPrint').disabled = false;
 	document.getElementById('submitAndPrint').style.display = '';
     }
-}
-function newReportedProblem() {
+}//}}}
+function newReportedProblem() {//{{{
     var problem = document.getElementById('problem').value;
     var user = document.getElementById('user').value;
     var iduser = document.getElementById('iduser').value;
@@ -589,8 +589,8 @@ function newReportedProblem() {
     xmlhttp.open("POST","updateproblemsdb",true);
     xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
     xmlhttp.send("problem="+problem+"&user="+iduser);
-}
-function validateVoucherForm() {
+}//}}}
+function validateVoucherForm() {//{{{
     var nature = 0;
     var checkboxes = 0;
     var sum = 0;
@@ -687,8 +687,8 @@ function validateVoucherForm() {
             foodparcels.style.borderColor = '';
         }
     }
-}
-function nofixaddr(checkbox) {
+}//}}}
+function nofixaddr(checkbox) {//{{{
     if(checkbox.checked) {
         if(document.getElementById('addr1').value != '') {
         	r = confirm("Are you sure you want to erase all of the address fields?");
@@ -739,8 +739,8 @@ function nofixaddr(checkbox) {
         document.getElementById('town').value = '';
         document.getElementById('town').disabled = false;
     }
-}
-function DonationItems(id, showhide) {
+}//}}}
+function DonationItems(id, showhide) {//{{{
     var items = document.getElementById('viewitems'+id);
     var button = document.getElementById('button'+id);
     
@@ -756,8 +756,8 @@ function DonationItems(id, showhide) {
         button.value = 'View';
     }
     button.setAttribute('onClick', "javascript: DonationItems("+id+", '"+showhide+"');");
-}
-function getClientAddress(el) {
+}//}}}
+function getClientAddress(el) {//{{{
     var idClient = el.options[el.selectedIndex].value;
     
     if(idClient == '') {
@@ -779,8 +779,8 @@ function getClientAddress(el) {
     
 	xmlhttp.open("GET","getclientaddr.php?id="+idClient,true);
     xmlhttp.send();
-}
-function getParcelsPerWeek(select) {
+}//}}}
+function getParcelsPerWeek(select) {//{{{
     var val = select.options[select.selectedIndex].value;
     
     if(val == '') {
@@ -803,16 +803,16 @@ function getParcelsPerWeek(select) {
     
 	xmlhttp.open("GET","getparcelsperweek.php?t="+val,true);
     xmlhttp.send();
-}
-function clearLog() {
+}//}}}
+function clearLog() {//{{{
     var conf = confirm('Are you sure you want to clear the Audit Log?\nIt will be possible to save it before clearing.');
     if(conf) {
         alert('Please save the following page and click on \'Clear\'.');
         document.getElementById('clear').style.display = '';
         window.open('viewlog.php?clear=1');
     }
-}
-function enablePass(el) {
+}//}}}
+function enablePass(el) {//{{{
     if(el.checked) {
         document.getElementById('pass1').disabled = false;
         document.getElementById('pass2').disabled = false;
@@ -820,8 +820,8 @@ function enablePass(el) {
         document.getElementById('pass1').disabled = true;
         document.getElementById('pass2').disabled = true;
     }
-}
-function removeUser(el) {
+}//}}}
+function removeUser(el) {//{{{
     if(el.checked) {
         var conf = confirm('Are you sure you want to remove this user?');
         if(conf) {
@@ -830,8 +830,8 @@ function removeUser(el) {
             el.checked = false;
         }
     }
-}
-function getUsers(query) {
+}//}}}
+function getUsers(query) {//{{{
     var xmlhttp;
     var sel = document.getElementById('searchtype');
     var type = sel.options[sel.selectedIndex].value;
@@ -858,9 +858,9 @@ function getUsers(query) {
     
     xmlhttp.open("GET","getusers.php?query="+query+"&type="+type,true);
     xmlhttp.send();
-}
-function hideUsers() {
+}//}}}
+function hideUsers() {//{{{
     document.getElementById('clientinfo').value = '';
     document.getElementById('result').innerHTML = '';
     document.getElementById("allusers").style.display = '';
-}
+}//}}}
