@@ -46,7 +46,7 @@
 			</tr>
 			<tr>
         		<td><h3>Date of Birth (DD-MM-YYYY)</h3></td>
-        		<td><input type='text' value='' name='dateOfBirth' id='optdob' maxlength='10'></td>
+        		<td><input type='date' value='' name='dateOfBirth' id='optdob' maxlength='10'></td>
 			</tr>
 			<tr>
     			<td><h3>Gender *</h3></td>

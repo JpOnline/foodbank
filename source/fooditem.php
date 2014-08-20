@@ -45,8 +45,8 @@ if(isset($_POST['foodin'])) { // Add item
 echo '<option value=\''.$cw['id'].'\'>'.$cw['centralWarehouseName'].'</option>';?>
 				</select></td>
 	    </tr>
-		<tr><td><h3>Donation Date (dd-mm-yyyy)</h3></td>
-				<td><input type='text' size='20' value='<?PHP echo Date("d-m-Y"); ?>' name='donationdate' onblur="verifyDate(this)" maxlength='10'></td>
+		<tr><td><h3>Donation Date</h3></td>
+				<td><input type='date' size='20' value='<?PHP echo Date("Y-m-d"); ?>' name='donationdate' onblur="verifyDate(this)" maxlength='10'></td>
 		</tr>
 		<tr><td><h3>Donation Name</h3></td>
 		<td><input type='text' size='20' value='Normal' name='donationname' maxlength='32'></td>

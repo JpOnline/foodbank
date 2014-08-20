@@ -172,7 +172,7 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 					</tr>
 				    <tr>
 					<td><h3>Date Voucher Issued</h3></td>
-					<td><input type='text' id='datevoucherissued' name='datevoucherissued' value='<?PHP if($editing) echo date('d-m-Y', strtotime($voucherRow['dateVoucherIssued'])); else echo date('d-m-Y'); ?>' maxlength='10' <?PHP echo $readonly; ?>></td>
+					<td><input type='date' id='datevoucherissued' name='datevoucherissued' value='<?PHP if($editing) echo date('Y-m-d', strtotime($voucherRow['dateVoucherIssued'])); else echo date('Y-m-d'); ?>' maxlength='10' <?PHP echo $readonly; ?>></td>
 				    </tr>
 					<tr><td colspan='2'>&nbsp;</td></tr>
 					<tr>

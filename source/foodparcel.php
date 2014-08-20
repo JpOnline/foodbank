@@ -148,8 +148,8 @@
 				</td>
         	</tr>
         	<tr>
-        		<td><h3>Packing Date (DD/MM/YYYY)</h3></td>
-        		<td><input type='text' value='<?PHP if($editing) echo date('d-m-Y', strtotime($row['packingDate'])); else echo date('d-m-Y'); ?>' name='packingdate' id='packingdate' <?PHP if($editing && !$admin) echo 'readonly=\'readonly\''; ?> maxlength='10'></td>
+        		<td><h3>Packing Date</h3></td>
+        		<td><input type='date' value='<?PHP if($editing) echo date('Y-m-d', strtotime($row['packingDate'])); else echo date('Y-m-d'); ?>' name='packingdate' id='packingdate' <?PHP if($editing && !$admin) echo 'readonly=\'readonly\''; ?> maxlength='10'></td>
         	</tr>
         	<tr>
         		<td><h3>Reference Number<?PHP if(!$editing) echo ' (Suggested)'; ?></h3></td>

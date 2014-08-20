@@ -339,12 +339,12 @@ function verifyDate(el) {//{{{
 }//}}}
 function isValidDate(date)//{{{
 {
-    var matches = /^(\d{2})[-\/](\d{2})[-\/](\d{4})$/.exec(date);
+    var matches = /^(\d{4})[-\/](\d{2})[-\/](\d{2})$/.exec(date);
     if (matches == null) return false;
     
-    var d = matches[1];
+    var y = matches[1];
     var m = matches[2]-1;
-    var y = matches[3];
+    var d = matches[3];
     
     var composedDate = new Date(y, m, d);
     
