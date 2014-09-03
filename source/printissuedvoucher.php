@@ -59,7 +59,7 @@ table td {
     require_once('log.php');
     $dbh = connect();
     echo '<h1>COLLECTION CAFES<br>';
-    echo '<h4>You can collect your food parcels(s) from the following venues: <br></br>';
+    echo '<h4>You can collect your food parcels(s) from the following venues: <br>';
 
 		echo '<table><tr><td valign = top ><h4>CANTERBURY</h4>';
 		
