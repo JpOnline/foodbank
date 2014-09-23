@@ -573,9 +573,14 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 
 
 }else if(isset($_GET['mode']) && $_GET['mode'] == 'viewallexchanged') {
-    $dbh = connect();
+	//Responsible for the reordering function of the columns
+	$order = (isset($_GET['orderby'])) ? $_GET['orderby'] : 'E.date Desc' ;
+	//Cut the first word from the orderImg variable, we stay with the DESC or ASC part with a space to retrieve the narrow image
+	$orderImg = strchr($order, ' ');
+	$orderImg = '<img style="vertical-align:middle" src=\'rw_common/images/navArrow' . substr($orderImg,1) . '.jpeg\' style=\'border:0;\'>';
 
-    $query = $dbh->prepare("SELECT DISTINCT E.date, E.pointOfIssueType, E.pointOfIssue, E.idVoucher, C.forename, C.familyName FROM Exchange E, Voucher V, Client C WHERE E.idVoucher = V.id AND V.idClient = C.id ORDER BY E.date DESC, V.id DESC");
+    $dbh = connect();
+    $query = $dbh->prepare("SELECT DISTINCT E.date, E.pointOfIssueType, E.pointOfIssue, E.idVoucher, C.forename, C.familyName FROM Exchange E, Voucher V, Client C WHERE E.idVoucher = V.id AND V.idClient = C.id ORDER BY " . $order);
 
     if($query->execute()) {
 	$voucherExRows = $query->fetchAll();
@@ -620,11 +625,35 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 	<div><h3>Vouchers exchanged</h3></div><br />
 	<div><table style="width: 100%; text-align:center;">
 	    <thead>
-				<td><h3>ID</h3></td>
-				<td><h3>Date given</h3></td>
-		<td><h3>Point of Issue</h3></td>
-		<td><h3>Client</h3></td>
-		<td>&nbsp;</td>
+			<td>
+			    <!-- it sends a configuration of ordering of the column -->
+			    <a href='voucher.php?mode=viewallexchanged&orderby=<?PHP if($order=='V.id Asc') echo 'V.id Desc'; else echo 'V.id Asc';?>'>
+					<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+					<h3>ID<?PHP if(strchr($order, ' ', true)=='V.id') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td>
+			    <!-- it sends a configuration of ordering of the column -->
+			    <a href='voucher.php?mode=viewallexchanged&orderby=<?PHP if($order=='E.date Asc') echo 'E.date Desc'; else echo 'E.date Asc';?>'>
+					<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+					<h3>Date given<?PHP if(strchr($order, ' ', true)=='E.date') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td>
+			    <!-- it sends a configuration of ordering of the column -->
+			    <a href='voucher.php?mode=viewallexchanged&orderby=<?PHP if($order=='E.pointOfIssue Asc') echo 'E.pointOfIssue Desc'; else echo 'E.pointOfIssue Asc';?>'>
+					<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+					<h3>Point of Issue<?PHP if(strchr($order, ' ', true)=='E.pointOfIssue') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td>
+			    <!-- it sends a configuration of ordering of the column -->
+			    <a href='voucher.php?mode=viewallexchanged&orderby=<?PHP if($order=='C.familyName Asc') echo 'C.familyName Desc'; else echo 'C.familyName Asc';?>'>
+					<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+					<h3>Client<?PHP if(strchr($order, ' ', true)=='C.familyName') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td>&nbsp;</td>
 	    </thead>
 	    <?PHP for($i = 0; $i < $voucherExCount; $i++) { ?>
 		<tr>
@@ -639,8 +668,14 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 	<form><div><input class="form-input-button" type='submit' value='Back'></div></form>
 <?PHP
 } else if(isset($_GET['mode']) && $_GET['mode'] == 'viewallissued') {
+	//Responsible for the reordering function of the columns
+	$order = (isset($_GET['orderby'])) ? $_GET['orderby'] : 'V.dateVoucherIssued Desc' ;
+	//Cut the first word from the orderImg variable, we stay with the DESC or ASC part with a space to retrieve the narrow image
+	$orderImg = strchr($order, ' ');
+	$orderImg = '<img style="vertical-align:middle" src=\'rw_common/images/navArrow' . substr($orderImg,1) . '.jpeg\' style=\'border:0;\'>';
+
     $dbh = connect();
-    $query = $dbh->prepare("SELECT V.dateVoucherIssued, V.id, A.organisation, C.forename, C.familyName FROM Agency A, Voucher V, Client C WHERE V.wasExchanged = 0 AND V.idClient = C.id AND V.idAgency = A.id ORDER BY V.dateVoucherIssued DESC, V.id DESC");
+    $query = $dbh->prepare("SELECT V.dateVoucherIssued, V.id, A.organisation, C.forename, C.familyName FROM Agency A, Voucher V, Client C WHERE V.wasExchanged = 0 AND V.idClient = C.id AND V.idAgency = A.id ORDER BY " . $order);
 
     if($query->execute()) {
 		$voucherIssuedRows = $query->fetchAll();
@@ -654,10 +689,34 @@ if(isset($_GET['mode']) && ($_GET['mode'] == 'newvoucher' || $_GET['mode'] == 'v
 	<div><h3>Vouchers issued</h3></div><br />
 		<div><table style="width: 100%; text-align:center;">
 		<thead>
-				<td><h3>ID</h3></td>
-				<td><h3>Date voucher issued</h3></td>
-			<td><h3>Agency Referrer</h3></td>
-			<td><h3>Client</h3></td>
+			<td>
+			    <!-- it sends a configuration of ordering of the column -->
+			    <a href='voucher.php?mode=viewallissued&orderby=<?PHP if($order=='V.id Asc') echo 'V.id Desc'; else echo 'V.id Asc';?>'>
+					<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+					<h3>ID<?PHP if(strchr($order, ' ', true)=='V.id') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td>
+			    <!-- it sends a configuration of ordering of the column -->
+			    <a href='voucher.php?mode=viewallissued&orderby=<?PHP if($order=='V.dateVoucherIssued Asc') echo 'V.dateVoucherIssued Desc'; else echo 'V.dateVoucherIssued Asc';?>'>
+					<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+					<h3>Date voucher issued<?PHP if(strchr($order, ' ', true)=='V.dateVoucherIssued') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td>
+			    <!-- it sends a configuration of ordering of the column -->
+			    <a href='voucher.php?mode=viewallissued&orderby=<?PHP if($order=='A.organisation Asc') echo 'A.organisation Desc'; else echo 'A.organisation Asc';?>'>
+					<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+					<h3>Agency Referrer<?PHP if(strchr($order, ' ', true)=='A.organisation') echo $orderImg;?></h3>
+			    </a>
+			</td>
+			<td>
+			    <!-- it sends a configuration of ordering of the column -->
+			    <a href='voucher.php?mode=viewallissued&orderby=<?PHP if($order=='C.familyName Asc') echo 'C.familyName Desc'; else echo 'C.familyName Asc';?>'>
+					<!-- verify if the first word of the $order variable is the same as the columns name to add the order img -->
+					<h3>Client<?PHP if(strchr($order, ' ', true)=='C.familyName') echo $orderImg;?></h3>
+			    </a>
+			</td>
 			<td>&nbsp;</td>
 		</thead>
 	    <?PHP for($i = 0; $i < $voucherIssuedCount; $i++) { ?>
