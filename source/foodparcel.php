@@ -153,7 +153,7 @@
         	</tr>
         	<tr>
         		<td><h3>Reference Number<?PHP if(!$editing) echo ' (Suggested)'; ?></h3></td>
-        		<td><input type='text' value='<?PHP if($editing) echo $row['referenceNumber']; ?>' id='referencenumber' name='referencenumber' <?PHP if(!$admin) echo 'readonly=\'readonly\''; ?>></td>
+        		<td><input type='text' value='<?PHP if($editing) echo $row['referenceNumber']; ?>' id='referencenumber' name='referencenumber' ></td>
         	</tr>
 			<tr>
 				<td><h3>Tag Colour</h3></td>
